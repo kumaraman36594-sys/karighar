@@ -1,0 +1,220 @@
+import { Artist, Product, TokenTransaction, MarketPriceInfo } from '../types';
+import { REAL_12_PRODUCTS, REAL_12_ARTISTS, REAL_CRAFT_CATEGORIES } from './realCraftsData';
+
+export const INITIAL_ARTISTS: Artist[] = REAL_12_ARTISTS;
+export const INITIAL_PRODUCTS: Product[] = REAL_12_PRODUCTS;
+
+export const INITIAL_TOKENS: TokenTransaction[] = [
+  {
+    id: 'tok-1',
+    artistId: 'artist-1',
+    amount: 5,
+    source: 'sale',
+    type: 'credit',
+    description: '✅ रमेश का ब्लू पॉटरी फूलदान बिका (Ramesh\'s blue pottery vase sold)',
+    timestamp: '2026-09-12T10:15:00.000Z',
+  },
+  {
+    id: 'tok-2',
+    artistId: 'artist-2',
+    amount: 5,
+    source: 'sale',
+    type: 'credit',
+    description: '✅ सीता की कांजीवरम साड़ी बिकी (Sita\'s Kanjivaram saree sold)',
+    timestamp: '2026-09-11T16:30:00.000Z',
+  },
+  {
+    id: 'tok-3',
+    artistId: 'artist-3',
+    amount: 5,
+    source: 'onboarding',
+    type: 'credit',
+    description: '✅ नया कारीगर जोड़ा: मोहन लाल (कच्छ बांधनी)',
+    timestamp: '2026-09-10T12:00:00.000Z',
+  },
+  {
+    id: 'tok-4',
+    amount: 50,
+    source: 'referral',
+    type: 'credit',
+    description: '🎁 रेफरल बोनस (सुरेश का पहला कारीगर व बिक्री)',
+    timestamp: '2026-09-08T14:20:00.000Z',
+  },
+  {
+    id: 'tok-5',
+    artistId: 'artist-5',
+    amount: 5,
+    source: 'sale',
+    type: 'credit',
+    description: '✅ बुधन राम की ढोकरा मूर्ति बिकी (Budhan\'s Dhokra figurine sold)',
+    timestamp: '2026-09-05T09:45:00.000Z',
+  },
+  {
+    id: 'tok-6',
+    amount: 175,
+    source: 'referral',
+    type: 'credit',
+    description: '🤝 रेफरल नेटवर्क रिवॉर्ड्स एवं विरासत अनुदान',
+    timestamp: '2026-08-15T08:00:00.000Z',
+  },
+];
+
+export const MARKET_PRICING_DATA: Record<string, MarketPriceInfo> = {
+  pottery: {
+    category: 'Blue Pottery',
+    basePrice: 450,
+    range: [450, 2500],
+    recommended: 550,
+    region: 'Jaipur, Rajasthan',
+    note: 'Similar pottery items in Jaipur sell for ₹450 - ₹2,500.',
+  },
+  'blue pottery': {
+    category: 'Blue Pottery',
+    basePrice: 450,
+    range: [450, 2500],
+    recommended: 550,
+    region: 'Jaipur, Rajasthan',
+    note: 'Similar pottery items in Jaipur sell for ₹450 - ₹2,500.',
+  },
+  textile: {
+    category: 'Silk Saree & Handloom',
+    basePrice: 3500,
+    range: [3500, 25000],
+    recommended: 8500,
+    region: 'Kanchipuram, Tamil Nadu',
+    note: 'Similar silk sarees in Kanchipuram sell for ₹3,500 - ₹25,000.',
+  },
+  handloom: {
+    category: 'Handloom & Silk',
+    basePrice: 3500,
+    range: [3500, 25000],
+    recommended: 8500,
+    region: 'Kanchipuram & Varanasi',
+    note: 'Similar handloom silk items sell for ₹3,500 - ₹25,000.',
+  },
+  bandhani: {
+    category: 'Bandhani',
+    basePrice: 350,
+    range: [350, 1800],
+    recommended: 650,
+    region: 'Kutch, Gujarat',
+    note: 'Similar bandhani dupattas in Kutch sell for ₹350 - ₹1,800.',
+  },
+  kanjivaram: {
+    category: 'Kanjivaram Silk',
+    basePrice: 3500,
+    range: [3500, 25000],
+    recommended: 8500,
+    region: 'Kanchipuram, Tamil Nadu',
+    note: 'Similar silk sarees in Kanchipuram sell for ₹3,500 - ₹25,000.',
+  },
+  banarasi: {
+    category: 'Banarasi Silk',
+    basePrice: 2000,
+    range: [2000, 15000],
+    recommended: 4500,
+    region: 'Varanasi, UP',
+    note: 'Similar Banarasi silk sarees in Varanasi sell for ₹2,000 - ₹15,000.',
+  },
+  dhokra: {
+    category: 'Dhokra Metal Craft',
+    basePrice: 500,
+    range: [500, 5000],
+    recommended: 1200,
+    region: 'Bastar, Chhattisgarh',
+    note: 'Similar lost-wax brass figurines in Bastar sell for ₹500 - ₹5,000.',
+  },
+  jewelry: {
+    category: 'Terracotta Jewelry',
+    basePrice: 150,
+    range: [150, 800],
+    recommended: 250,
+    region: 'Bishnupur, West Bengal',
+    note: 'Similar handcrafted terracotta jewelry sells for ₹150 - ₹800.',
+  },
+  terracotta: {
+    category: 'Terracotta Jewelry',
+    basePrice: 150,
+    range: [150, 800],
+    recommended: 250,
+    region: 'Bishnupur, West Bengal',
+    note: 'Similar handcrafted terracotta jewelry sells for ₹150 - ₹800.',
+  },
+  painting: {
+    category: 'Madhubani Painting',
+    basePrice: 300,
+    range: [300, 5000],
+    recommended: 800,
+    region: 'Mithila, Bihar',
+    note: 'Similar traditional folk paintings in Mithila sell for ₹300 - ₹5,000.',
+  },
+  madhubani: {
+    category: 'Madhubani Painting',
+    basePrice: 300,
+    range: [300, 5000],
+    recommended: 800,
+    region: 'Mithila, Bihar',
+    note: 'Similar traditional folk paintings in Mithila sell for ₹300 - ₹5,000.',
+  },
+  pattachitra: {
+    category: 'Pattachitra Painting',
+    basePrice: 400,
+    range: [400, 6000],
+    recommended: 1500,
+    region: 'Puri, Odisha',
+    note: 'Similar Pattachitra scroll paintings in Puri sell for ₹400 - ₹6,000.',
+  },
+  paithani: {
+    category: 'Paithani Saree',
+    basePrice: 5000,
+    range: [5000, 50000],
+    recommended: 15000,
+    region: 'Paithan, Maharashtra',
+    note: 'Similar Paithani bridal silk sarees sell for ₹5,000 - ₹50,000.',
+  },
+  channapatna: {
+    category: 'Channapatna Toys',
+    basePrice: 200,
+    range: [200, 2000],
+    recommended: 450,
+    region: 'Channapatna, Karnataka',
+    note: 'Similar lacquer wooden toys in Channapatna sell for ₹200 - ₹2,000.',
+  },
+  kalamkari: {
+    category: 'Kalamkari Textile',
+    basePrice: 500,
+    range: [500, 8000],
+    recommended: 1200,
+    region: 'Srikalahasti, Andhra Pradesh',
+    note: 'Similar hand-painted Kalamkari textiles sell for ₹500 - ₹8,000.',
+  },
+  warli: {
+    category: 'Warli Painting',
+    basePrice: 250,
+    range: [250, 3000],
+    recommended: 950,
+    region: 'Palghar, Maharashtra',
+    note: 'Similar Warli tribal artworks sell for ₹250 - ₹3,000.',
+  },
+};
+
+export const SAMPLE_CAPTURE_PREVIEWS = [
+  {
+    angle: 'Front View',
+    label: 'Center product in frame',
+    url: '/assets/crafts/blue_pottery_vase.jpg',
+  },
+  {
+    angle: '45° Angle',
+    label: 'Rotate 45° to the right',
+    url: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    angle: 'Top View',
+    label: 'Show the top rim and depth',
+    url: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&auto=format&fit=crop&q=80',
+  },
+];
+
+export const MOCK_PRODUCTS = INITIAL_PRODUCTS;
+export const MOCK_ARTISTS = INITIAL_ARTISTS;

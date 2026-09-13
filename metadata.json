@@ -1,0 +1,11 @@
+{
+  "name": "Artisan Marketplace",
+  "description": "कारीगर (Karighar) · हुनर से बाज़ार तक — Mobile-first, cross-platform application helping marginalized artisans in India sell handmade products online with AI voice guidance, photo enhancement, and fair market pricing.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
