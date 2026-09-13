@@ -72,7 +72,7 @@ export const FeaturedCategoriesGrid: React.FC<FeaturedCategoriesGridProps> = ({
   const { t } = useLanguage();
 
   return (
-    <div className="bg-[#FFFFFF] border border-[#DDDDDD] rounded-lg p-4 space-y-3.5 shadow-xs select-none">
+    <div className="bg-[#FFFFFF] border border-[#DDDDDD] rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-3.5 shadow-xs select-none">
       <div className="flex items-center justify-between border-b border-[#DDDDDD] pb-2.5">
         <div>
           <h2 className="text-base sm:text-lg font-extrabold text-[#111111]">
@@ -85,7 +85,7 @@ export const FeaturedCategoriesGrid: React.FC<FeaturedCategoriesGridProps> = ({
       </div>
 
       {/* 2x3 Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
         {FEATURED_CATS.map((cat) => {
           const label = t(cat.nameKey, cat.fallback);
 
@@ -93,7 +93,7 @@ export const FeaturedCategoriesGrid: React.FC<FeaturedCategoriesGridProps> = ({
             <div
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className="group border border-[#DDDDDD] rounded-[4px] p-2 hover:border-[#FF9900] hover:shadow-sm transition-all cursor-pointer bg-[#FFFFFF] flex flex-col justify-between"
+              className="group border border-[#DDDDDD] rounded-[4px] p-1.5 sm:p-2 hover:border-[#FF9900] hover:shadow-sm transition-all cursor-pointer bg-[#FFFFFF] flex flex-col justify-between"
             >
               <div className="aspect-4/3 rounded-[2px] overflow-hidden bg-[#F5F5F5] mb-2 relative">
                 <img

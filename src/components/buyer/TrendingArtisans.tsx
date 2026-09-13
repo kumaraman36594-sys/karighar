@@ -26,7 +26,7 @@ export const TrendingArtisans: React.FC<TrendingArtisansProps> = ({
   const defaultAvatar = 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&fit=crop&q=80';
 
   return (
-    <div className="bg-[#FFFFFF] border border-[#DDDDDD] rounded-lg p-4 space-y-3.5 shadow-xs select-none">
+    <div className="bg-[#FFFFFF] border border-[#DDDDDD] rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-3.5 shadow-xs select-none">
       <div className="flex items-center justify-between border-b border-[#DDDDDD] pb-2.5">
         <div>
           <h2 className="text-base sm:text-lg font-extrabold text-[#111111]">
@@ -38,7 +38,7 @@ export const TrendingArtisans: React.FC<TrendingArtisansProps> = ({
         </div>
       </div>
 
-      <div className="flex items-stretch gap-3 overflow-x-auto pb-1 no-scrollbar scroll-smooth">
+      <div className="flex items-stretch gap-2.5 sm:gap-3 overflow-x-auto pb-1 scrollbar-none scroll-smooth">
         {artists.slice(0, 6).map((art) => {
           const isFollowing = Boolean(followingMap[art.id]);
           const avatar = art.avatar || defaultAvatar;
@@ -47,7 +47,7 @@ export const TrendingArtisans: React.FC<TrendingArtisansProps> = ({
             <div
               key={art.id}
               onClick={() => onSelectArtist(art)}
-              className="w-48 sm:w-52 shrink-0 bg-[#FFFFFF] border border-[#DDDDDD] rounded-[4px] p-3 flex flex-col items-center text-center justify-between hover:border-[#FF9900] hover:shadow-sm transition-all cursor-pointer group"
+              className="w-40 xs:w-48 sm:w-52 shrink-0 bg-[#FFFFFF] border border-[#DDDDDD] rounded-[4px] p-2.5 sm:p-3 flex flex-col items-center text-center justify-between hover:border-[#FF9900] hover:shadow-sm transition-all cursor-pointer group"
             >
               <div className="flex flex-col items-center">
                 {/* Circular Photo */}

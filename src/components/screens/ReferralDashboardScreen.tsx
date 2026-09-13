@@ -79,7 +79,7 @@ export const ReferralDashboardScreen: React.FC<ReferralDashboardScreenProps> = (
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 pb-24 space-y-6">
+    <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 space-y-4 sm:space-y-6">
       {/* Toast feedback */}
       {toast && (
         <div className="fixed top-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 animate-fade-in">
@@ -91,21 +91,21 @@ export const ReferralDashboardScreen: React.FC<ReferralDashboardScreenProps> = (
       )}
 
       {/* Header bar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={onBack}
-            className="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-700 shadow-xs hover:bg-stone-50 transition-colors cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-700 shadow-xs hover:bg-stone-50 transition-colors cursor-pointer shrink-0"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-stone-900 flex items-center gap-2">
-              <Users className="w-6 h-6 text-[#B4431E]" />
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-extrabold text-stone-900 flex items-center gap-1.5 sm:gap-2 truncate">
+              <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#B4431E]" />
               <span>मेरे रेफरल (My Referrals)</span>
             </h1>
-            <p className="text-xs text-stone-500 font-medium">
+            <p className="text-[11px] sm:text-xs text-stone-500 font-medium truncate">
               मित्रों को जोड़ें, कारीगरों को सशक्त बनाएं और टोकन कमाएं
             </p>
           </div>
@@ -115,40 +115,40 @@ export const ReferralDashboardScreen: React.FC<ReferralDashboardScreenProps> = (
       </div>
 
       {/* Responsive Two-Column Grid on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
         {/* Left Column (5 cols): Hero Code Card + Tier Progress + Tiers Guide */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-4 sm:space-y-6">
           {/* Hero Referral Code Card */}
-          <div className="bg-gradient-to-br from-[#963717] via-[#B4431E] to-[#782c0f] rounded-xl p-6 text-white shadow-md space-y-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Gift className="w-5 h-5 text-amber-300" />
-                <span className="text-xs sm:text-sm font-bold text-amber-100 uppercase tracking-wider">
-                  आपका अनूठा रेफरल कोड
+          <div className="bg-gradient-to-br from-[#963717] via-[#B4431E] to-[#782c0f] rounded-xl p-4 sm:p-6 text-white shadow-md space-y-4 sm:space-y-5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 shrink-0" />
+                <span className="text-[11px] sm:text-sm font-bold text-amber-100 uppercase tracking-wider">
+                  रेफरल कोड
                 </span>
               </div>
-              <span className="px-3 py-1 rounded-full bg-white/20 text-xs font-extrabold text-amber-200 backdrop-blur-xs">
-                +50 टोकन प्रति रेफरल
+              <span className="px-2.5 py-0.5 sm:py-1 rounded-full bg-white/20 text-[10px] sm:text-xs font-extrabold text-amber-200 backdrop-blur-xs shrink-0">
+                +50 टोकन
               </span>
             </div>
 
             {/* Big Code Display */}
-            <div className="bg-black/20 backdrop-blur-xs rounded-xl p-4 sm:p-5 border border-white/15 text-center space-y-1">
-              <span className="text-2xl sm:text-3xl font-black tracking-widest text-amber-300 font-mono block select-all">
+            <div className="bg-black/20 backdrop-blur-xs rounded-xl p-3 sm:p-5 border border-white/15 text-center space-y-1">
+              <span className="text-xl sm:text-3xl font-black tracking-widest text-amber-300 font-mono block select-all">
                 {referralCode}
               </span>
-              <p className="text-xs text-amber-100/90">
+              <p className="text-[11px] sm:text-xs text-amber-100/90">
                 नए उपयोगकर्ता को <strong className="text-white">+25 टोकन</strong> और आपको <strong className="text-white">+50 टोकन</strong>
               </p>
             </div>
 
             {/* Share & Copy Action Buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={handleShare}
                 id="share-referral-btn"
-                className="h-11 rounded-lg bg-amber-400 hover:bg-amber-300 text-amber-950 font-extrabold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="h-11 rounded-lg bg-amber-400 hover:bg-amber-300 text-amber-950 font-extrabold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-1.5 sm:gap-2 transition-colors cursor-pointer"
               >
                 <Share2 className="w-4 h-4" />
                 <span>शेयर करें</span>

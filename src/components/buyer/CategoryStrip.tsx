@@ -78,8 +78,8 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
   const { t } = useLanguage();
 
   return (
-    <div className="bg-[#FFFFFF] border-b border-[#DDDDDD] py-3 px-2 sm:px-4 select-none">
-      <div className="max-w-7xl mx-auto flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth">
+    <div className="bg-[#FFFFFF] border-b border-[#DDDDDD] py-2 sm:py-3 px-2 sm:px-4 select-none">
+      <div className="max-w-7xl mx-auto flex items-center gap-2.5 sm:gap-6 overflow-x-auto scrollbar-none scroll-smooth">
         {CATEGORY_ITEMS.map((cat) => {
           const isSelected = selectedCategory === cat.id;
           const label = t(cat.nameKey, cat.fallback);
@@ -89,11 +89,11 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
               key={cat.id}
               type="button"
               onClick={() => onSelectCategory(cat.id)}
-              className="flex flex-col items-center gap-1.5 shrink-0 group cursor-pointer"
+              className="flex flex-col items-center gap-1 sm:gap-1.5 shrink-0 group cursor-pointer"
             >
               {/* Circular Avatar */}
               <div
-                className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden p-0.5 border-2 transition-all ${
+                className={`w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden p-0.5 border-2 transition-all ${
                   isSelected
                     ? 'border-[#FF9900] ring-2 ring-[#FF9900]/30 scale-105 shadow-sm'
                     : 'border-[#DDDDDD] group-hover:border-[#FF9900]'
@@ -109,7 +109,7 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
 
               {/* Category Label */}
               <span
-                className={`text-[11px] sm:text-xs font-semibold text-center leading-tight max-w-[92px] truncate px-0.5 transition-colors ${
+                className={`text-[10px] sm:text-xs font-semibold text-center leading-tight max-w-[76px] xs:max-w-[92px] truncate px-0.5 transition-colors ${
                   isSelected
                     ? 'text-[#FF9900] font-bold'
                     : 'text-[#111111] group-hover:text-[#FF9900]'

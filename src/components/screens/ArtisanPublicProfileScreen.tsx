@@ -138,24 +138,24 @@ export const ArtisanPublicProfileScreen: React.FC<ArtisanPublicProfileScreenProp
         </div>
 
         {/* Stats Row: Products, Sales, Total Earned */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 p-4 bg-white rounded-xl border border-stone-200 shadow-xs text-center">
-          <div className="p-2">
-            <span className="text-xl sm:text-2xl font-bold text-[#B4431E] block">
+        <div className="grid grid-cols-3 gap-1 sm:gap-4 p-2.5 sm:p-4 bg-white rounded-xl border border-stone-200 shadow-xs text-center">
+          <div className="p-1 sm:p-2">
+            <span className="text-lg sm:text-2xl font-bold text-[#B4431E] block">
               {artisanProducts.length || 12}
             </span>
-            <span className="text-xs font-medium text-stone-500">उत्पाद (Products)</span>
+            <span className="text-[10px] sm:text-xs font-medium text-stone-500 truncate block">उत्पाद</span>
           </div>
-          <div className="p-2 border-x border-stone-100">
-            <span className="text-xl sm:text-2xl font-bold text-stone-900 block">
+          <div className="p-1 sm:p-2 border-x border-stone-100">
+            <span className="text-lg sm:text-2xl font-bold text-stone-900 block">
               {salesCount}
             </span>
-            <span className="text-xs font-medium text-stone-500">बिक्री (Sales)</span>
+            <span className="text-[10px] sm:text-xs font-medium text-stone-500 truncate block">बिक्री</span>
           </div>
-          <div className="p-2">
-            <span className="text-xl sm:text-2xl font-bold text-emerald-700 block">
+          <div className="p-1 sm:p-2">
+            <span className="text-lg sm:text-2xl font-bold text-emerald-700 block truncate">
               {totalEarned}
             </span>
-            <span className="text-xs font-medium text-stone-500">कमाई (Earned)</span>
+            <span className="text-[10px] sm:text-xs font-medium text-stone-500 truncate block">कमाई</span>
           </div>
         </div>
 

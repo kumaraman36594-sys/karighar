@@ -13,7 +13,7 @@ export const BuyerCategoriesScreen: React.FC<BuyerCategoriesScreenProps> = ({
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] text-[#111111] pb-24 p-4 max-w-6xl mx-auto space-y-6 select-none">
+    <div className="min-h-screen bg-[#FFFFFF] text-[#111111] pb-24 p-3 sm:p-4 md:p-6 max-w-6xl mx-auto space-y-4 sm:space-y-6 select-none">
       <div className="border-b border-[#DDDDDD] pb-3">
         <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 text-[#FF9900] text-xs font-bold mb-1">
           <Sparkles className="w-3.5 h-3.5" />
@@ -27,7 +27,7 @@ export const BuyerCategoriesScreen: React.FC<BuyerCategoriesScreenProps> = ({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
         {REAL_CRAFT_CATEGORIES.map((craft) => {
           return (
             <div

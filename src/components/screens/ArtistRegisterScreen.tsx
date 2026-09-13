@@ -85,8 +85,8 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-full max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         {/* Top Header with Progress indicator */}
         <div>
           <div className="flex items-center justify-between gap-2 mb-3">
@@ -100,16 +100,16 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
             </div>
           </div>
 
-          <div className="flex items-start justify-between gap-3 bg-white p-5 rounded-xl border border-stone-200 shadow-xs">
-            <div className="flex items-start gap-3">
-              <div className="w-11 h-11 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-[#B4431E] shrink-0 mt-0.5">
-                <UserCheck className="w-6 h-6" />
+          <div className="flex items-start justify-between gap-2.5 sm:gap-3 bg-white p-3.5 sm:p-5 rounded-xl border border-stone-200 shadow-xs">
+            <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-[#B4431E] shrink-0 mt-0.5">
+                <UserCheck className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 leading-tight">
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-3xl font-extrabold text-stone-900 leading-tight truncate">
                   {t.registerArtist}
                 </h1>
-                <p className="text-sm text-stone-600 mt-1">
+                <p className="text-xs sm:text-sm text-stone-600 mt-0.5 sm:mt-1 truncate">
                   पहला कारीगर जोड़ें या अपना विवरण दर्ज करें
                 </p>
               </div>
@@ -121,12 +121,13 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
               variant="primary"
               title="शीर्षक सुनें"
               id="artist-register-hear-title-btn"
+              className="shrink-0"
             />
           </div>
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-xl p-5 sm:p-6 border border-stone-200 shadow-xs space-y-6">
+        <div className="bg-white rounded-xl p-3.5 sm:p-6 border border-stone-200 shadow-xs space-y-5 sm:space-y-6">
           {/* Responsive 2-column grid for primary text inputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* 1. Name */}
@@ -283,7 +284,7 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
                 id="hear-craft-field-btn"
               />
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
               {CRAFTS.map((c) => {
                 const isSelected = craft === c.id;
                 return (
@@ -294,7 +295,7 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
                       setCraft(c.id);
                       if (!isAudioMuted) speak(c.label, language);
                     }}
-                    className={`min-h-[56px] p-2.5 rounded-xl border-2 text-left flex items-center gap-3 transition-all cursor-pointer ${
+                    className={`min-h-[52px] sm:min-h-[56px] p-2 sm:p-2.5 rounded-xl border-2 text-left flex items-center gap-2 sm:gap-3 transition-all cursor-pointer ${
                       isSelected
                         ? 'border-[#B4431E] bg-orange-50/70 shadow-xs ring-2 ring-[#B4431E]/20'
                         : 'border-stone-200 hover:border-amber-300 bg-stone-50/40'
@@ -303,14 +304,14 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
                     <img
                       src={c.image}
                       alt={c.label}
-                      className="w-11 h-11 rounded-lg object-cover shrink-0 border border-stone-200"
+                      className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg object-cover shrink-0 border border-stone-200"
                       referrerPolicy="no-referrer"
                     />
                     <div className="min-w-0">
                       <div className="text-xs sm:text-sm font-bold text-stone-900 truncate">
                         {c.emoji} {c.id}
                       </div>
-                      <div className="text-[11px] text-stone-500 truncate mt-0.5">
+                      <div className="text-[10px] sm:text-[11px] text-stone-500 truncate mt-0.5">
                         {c.label}
                       </div>
                     </div>

@@ -72,30 +72,30 @@ export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
     : 'आगे बढ़ें';
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 select-none">
-      <div className="w-full max-w-4xl bg-white rounded-xl p-6 sm:p-8 md:p-10 shadow-sm border border-stone-200 flex flex-col space-y-6">
+    <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-2.5 sm:p-6 md:p-8 select-none">
+      <div className="w-full max-w-4xl bg-white rounded-xl p-3.5 sm:p-8 md:p-10 shadow-sm border border-stone-200 flex flex-col space-y-4 sm:space-y-6">
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 mx-auto rounded-xl bg-[#B4431E] text-white flex items-center justify-center shadow-xs">
-            <Palette className="w-7 h-7" />
+        <div className="text-center space-y-1.5 sm:space-y-2">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-xl bg-[#B4431E] text-white flex items-center justify-center shadow-xs">
+            <Palette className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
-              कारीगर <span className="text-sm font-semibold text-stone-500">(Karighar)</span>
+            <h1 className="text-xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
+              कारीगर <span className="text-xs sm:text-sm font-semibold text-stone-500">(Karighar)</span>
             </h1>
-            <p className="text-sm font-semibold text-[#B4431E] mt-0.5">
+            <p className="text-xs sm:text-sm font-semibold text-[#B4431E] mt-0.5">
               "हुनर से बाज़ार तक" · From Skill to Marketplace
             </p>
           </div>
         </div>
 
         {/* Question with Audio Speaker Button */}
-        <div className="flex items-center justify-between gap-3 bg-stone-50 p-4 rounded-lg border border-stone-200">
+        <div className="flex items-center justify-between gap-2.5 sm:gap-3 bg-stone-50 p-3 sm:p-4 rounded-lg border border-stone-200">
           <div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-stone-900">
+            <h2 className="text-base sm:text-xl font-extrabold text-stone-900">
               अपनी भाषा चुनें
             </h2>
-            <p className="text-xs text-stone-600 font-medium">
+            <p className="text-[11px] sm:text-xs text-stone-600 font-medium">
               Choose your regional language / உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்
             </p>
           </div>
@@ -106,11 +106,12 @@ export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
             variant="primary"
             title="अपनी भाषा चुनें सुनें"
             id="speak-choose-language-btn"
+            className="shrink-0"
           />
         </div>
 
         {/* Responsive Grid of Language Cards (2 on phone, 3 on tablet, 4 on desktop) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
           {LANGUAGES.map((lang) => {
             const isSelected = selectedLang === lang.code;
             return (
@@ -118,7 +119,7 @@ export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
                 key={lang.code}
                 id={`lang-card-${lang.code}`}
                 onClick={() => handleCardClick(lang)}
-                className={`relative min-h-[90px] p-3.5 sm:p-4 rounded-lg border-2 transition-all cursor-pointer flex flex-col justify-between group select-none ${
+                className={`relative min-h-[84px] sm:min-h-[90px] p-2.5 sm:p-4 rounded-lg border-2 transition-all cursor-pointer flex flex-col justify-between group select-none ${
                   isSelected
                     ? 'border-[#B4431E] bg-amber-50/50 shadow-xs scale-[1.02]'
                     : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50'
@@ -126,7 +127,7 @@ export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
               >
                 {/* Header inside card: Script Badge & Audio button */}
                 <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm bg-stone-100 text-stone-700">
+                  <span className="text-[10px] uppercase font-bold px-1.5 sm:px-2 py-0.5 rounded-sm bg-stone-100 text-stone-700 truncate">
                     {lang.scriptBadge}
                   </span>
                   <div className="flex items-center gap-1.5">

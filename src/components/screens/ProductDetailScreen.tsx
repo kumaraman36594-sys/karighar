@@ -92,22 +92,23 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
       )}
 
       {/* Top Bar with Back & Share */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#DDDDDD] px-3 sm:px-6 py-2.5 flex items-center justify-between">
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#DDDDDD] px-2.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between">
         <button
           type="button"
           onClick={onBack}
           className="flex items-center gap-1.5 text-xs font-bold text-[#111111] hover:text-[#FF9900] cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to marketplace</span>
+          <span className="hidden xs:inline">Back to marketplace</span>
+          <span className="xs:hidden">Back</span>
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Read Aloud Button */}
           <button
             type="button"
             onClick={readDetailsAloud}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-amber-50 hover:bg-amber-100 text-[#FF9900] border border-amber-200 text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-md bg-amber-50 hover:bg-amber-100 text-[#FF9900] border border-amber-200 text-xs font-bold transition-colors cursor-pointer"
             title="Read description aloud"
           >
             <Volume2 className="w-4 h-4" />
@@ -118,7 +119,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
           <button
             type="button"
             onClick={() => setIsWishlisted(!isWishlisted)}
-            className="p-2 rounded-md hover:bg-[#F5F5F5] text-[#565959] cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-md hover:bg-[#F5F5F5] text-[#565959] cursor-pointer"
           >
             <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
           </button>
@@ -134,14 +135,14 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
                 alert('Product link copied to clipboard!');
               }
             }}
-            className="p-2 rounded-md hover:bg-[#F5F5F5] text-[#565959] cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-md hover:bg-[#F5F5F5] text-[#565959] cursor-pointer"
           >
             <Share2 className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8">
         {/* Left: Gallery & 3D Viewer (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           <div className="relative aspect-square sm:aspect-4/3 rounded-lg overflow-hidden border border-[#DDDDDD] bg-[#F5F5F5] group">
@@ -324,21 +325,21 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
           </div>
 
           {/* Trust Guarantees */}
-          <div className="grid grid-cols-2 gap-2 text-[11px] text-[#565959] pt-2">
+          <div className="grid grid-cols-2 gap-2 text-[10px] sm:text-[11px] text-[#565959] pt-2">
             <div className="flex items-center gap-1.5 bg-[#F5F5F5] p-2 rounded-md">
               <ShieldCheck className="w-4 h-4 text-[#007600] shrink-0" />
-              <span>GI Verified Authentic</span>
+              <span className="truncate">GI Verified Authentic</span>
             </div>
             <div className="flex items-center gap-1.5 bg-[#F5F5F5] p-2 rounded-md">
               <Truck className="w-4 h-4 text-[#FF9900] shrink-0" />
-              <span>India Post SpeedPost</span>
+              <span className="truncate">India Post SpeedPost</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Deep Dive Sections (Specifications, Artisan Story, Reviews, Similar Products) */}
-      <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-8 border-t border-[#DDDDDD] mt-6">
+      <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-6 space-y-6 sm:space-y-8 border-t border-[#DDDDDD] mt-6">
         {/* Specifications Table */}
         <div className="space-y-3">
           <h2 className="text-lg font-bold text-[#111111]">
@@ -346,23 +347,23 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
           </h2>
 
           <div className="border border-[#DDDDDD] rounded-md divide-y divide-[#DDDDDD] text-xs">
-            <div className="grid grid-cols-2 p-3 bg-[#F5F5F5]">
+            <div className="grid grid-cols-2 p-2.5 sm:p-3 bg-[#F5F5F5]">
               <span className="font-bold text-[#565959]">Craft Category</span>
               <span className="font-medium text-[#111111]">{product.category || 'Handmade Craft'}</span>
             </div>
-            <div className="grid grid-cols-2 p-3 bg-white">
+            <div className="grid grid-cols-2 p-2.5 sm:p-3 bg-white">
               <span className="font-bold text-[#565959]">Raw Material</span>
               <span className="font-medium text-[#111111]">{product.material || 'Organic Clay & Natural Dyes'}</span>
             </div>
-            <div className="grid grid-cols-2 p-3 bg-[#F5F5F5]">
+            <div className="grid grid-cols-2 p-2.5 sm:p-3 bg-[#F5F5F5]">
               <span className="font-bold text-[#565959]">Dimensions / Size</span>
               <span className="font-medium text-[#111111]">{product.dimensions || '10 x 5 inches'}</span>
             </div>
-            <div className="grid grid-cols-2 p-3 bg-white">
+            <div className="grid grid-cols-2 p-2.5 sm:p-3 bg-white">
               <span className="font-bold text-[#565959]">Production Time</span>
               <span className="font-medium text-[#111111]">{product.makingTime || '4 days of handcrafting'}</span>
             </div>
-            <div className="grid grid-cols-2 p-3 bg-[#F5F5F5]">
+            <div className="grid grid-cols-2 p-2.5 sm:p-3 bg-[#F5F5F5]">
               <span className="font-bold text-[#565959]">Artisan Origin</span>
               <span className="font-medium text-[#111111]">{product.artistLocation || product.region || 'Rajasthan, India'}</span>
             </div>
@@ -370,7 +371,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
         </div>
 
         {/* Artisan Story */}
-        <div className="bg-amber-50/50 border border-amber-200 rounded-lg p-5 space-y-3">
+        <div className="bg-amber-50/50 border border-amber-200 rounded-lg p-4 sm:p-5 space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-[#FF9900] text-white flex items-center justify-center text-xl font-bold shrink-0">
               👤
@@ -424,7 +425,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
                 comment: 'Authentic GI quality. Very fast delivery and the details are even better in person than in the photo.',
               },
             ].map((rev) => (
-              <div key={rev.id} className="border border-[#DDDDDD] rounded-md p-4 bg-white space-y-1.5">
+              <div key={rev.id} className="border border-[#DDDDDD] rounded-md p-3.5 sm:p-4 bg-white space-y-1.5">
                 <div className="flex items-center gap-1 text-[#FFA41C]">
                   {[...Array(rev.rating)].map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-[#FFA41C]" />
@@ -446,7 +447,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
               {t('similarProducts')}
             </h2>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
               {similarProducts.slice(0, 4).map((sim) => (
                 <div
                   key={sim.id}

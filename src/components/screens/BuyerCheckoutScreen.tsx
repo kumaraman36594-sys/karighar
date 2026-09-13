@@ -70,7 +70,7 @@ export const BuyerCheckoutScreen: React.FC<BuyerCheckoutScreenProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-28 space-y-6 select-none bg-white text-[#111111]">
+    <div className="max-w-4xl mx-auto p-3 sm:p-6 pb-28 space-y-6 select-none bg-white text-[#111111]">
       {/* Top Bar */}
       <div className="flex items-center gap-3 border-b border-[#DDDDDD] pb-3">
         <button
@@ -94,7 +94,7 @@ export const BuyerCheckoutScreen: React.FC<BuyerCheckoutScreenProps> = ({
         {/* Left 2 Cols: Form */}
         <div className="lg:col-span-2 space-y-6">
           {/* 1. Delivery Address */}
-          <div className="border border-[#DDDDDD] rounded-lg p-4 bg-white space-y-3">
+          <div className="border border-[#DDDDDD] rounded-lg p-3 sm:p-4 bg-white space-y-3">
             <div className="flex items-center gap-2 border-b border-[#DDDDDD] pb-2 text-sm font-bold text-[#111111]">
               <MapPin className="w-4 h-4 text-[#FF9900]" />
               <span>1. Delivery Address</span>

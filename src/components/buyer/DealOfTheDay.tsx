@@ -41,7 +41,7 @@ export const DealOfTheDay: React.FC<DealOfTheDayProps> = ({
   const dealProducts = products.slice(0, 4);
 
   return (
-    <div className="bg-[#FFFFFF] border border-[#DDDDDD] rounded-lg p-4 space-y-3.5 shadow-xs select-none">
+    <div className="bg-[#FFFFFF] border border-[#DDDDDD] rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-3.5 shadow-xs select-none">
       {/* Header with Title & Timer */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DDDDDD] pb-3">
         <div className="flex items-center gap-2">
@@ -59,7 +59,7 @@ export const DealOfTheDay: React.FC<DealOfTheDayProps> = ({
         </div>
 
         {/* Live Countdown Box */}
-        <div className="flex items-center gap-1.5 self-start sm:self-auto bg-[#F5F5F5] px-3 py-1.5 rounded-md border border-[#DDDDDD]">
+        <div className="flex items-center gap-1.5 self-start sm:self-auto bg-[#F5F5F5] px-2.5 sm:px-3 py-1.5 rounded-md border border-[#DDDDDD]">
           <Clock className="w-3.5 h-3.5 text-red-600" />
           <span className="text-xs text-[#565959] font-semibold">{t('endsIn')}:</span>
           <span className="font-mono text-xs font-extrabold text-red-600">
@@ -69,7 +69,7 @@ export const DealOfTheDay: React.FC<DealOfTheDayProps> = ({
       </div>
 
       {/* Horizontal Scroll of Deal Cards */}
-      <div className="flex items-stretch gap-3 overflow-x-auto pb-1 no-scrollbar scroll-smooth">
+      <div className="flex items-stretch gap-2.5 sm:gap-3 overflow-x-auto pb-1 scrollbar-none scroll-smooth">
         {dealProducts.map((prod) => {
           const originalPrice = Math.round(prod.price * 1.4);
           const discountPercent = Math.round(((originalPrice - prod.price) / originalPrice) * 100);
@@ -79,7 +79,7 @@ export const DealOfTheDay: React.FC<DealOfTheDayProps> = ({
             <div
               key={prod.id}
               onClick={() => onSelectProduct(prod)}
-              className="w-48 sm:w-56 shrink-0 bg-[#FFFFFF] border border-[#DDDDDD] rounded-[4px] p-2.5 flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer group"
+              className="w-40 xs:w-48 sm:w-56 shrink-0 bg-[#FFFFFF] border border-[#DDDDDD] rounded-[4px] p-2 sm:p-2.5 flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer group"
             >
               <div>
                 {/* Image + Deal Badge */}

@@ -265,7 +265,7 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
 
         {/* Center Frame Guide Overlay (if not finished) */}
         {currentStep < 3 && (
-          <div className="relative z-10 w-72 h-80 sm:w-84 sm:h-96 border-2 border-dashed border-amber-400/80 rounded-2xl flex flex-col items-center justify-between p-4 shadow-2xl pointer-events-none">
+          <div className="relative z-10 w-[min(280px,85vw)] aspect-3/4 sm:w-84 sm:aspect-auto sm:h-96 border-2 border-dashed border-amber-400/80 rounded-2xl flex flex-col items-center justify-between p-3 sm:p-4 shadow-2xl pointer-events-none">
             {/* Corner Markers */}
             <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-amber-400 rounded-tl-lg" />
             <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-amber-400 rounded-tr-lg" />
@@ -273,7 +273,7 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
             <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-amber-400 rounded-br-lg" />
 
             {/* AI Guidance Badge Top */}
-            <div className="bg-black/75 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-amber-400/40 text-xs font-bold text-amber-300 shadow-md">
+            <div className="bg-black/75 backdrop-blur-md px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border border-amber-400/40 text-[11px] sm:text-xs font-bold text-amber-300 shadow-md">
               AI Guide: Step {currentStep + 1}
             </div>
 
@@ -283,7 +283,7 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
             </div>
 
             {/* AI Guidance Banner Bottom */}
-            <div className="bg-black/80 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/20 text-center max-w-[260px]">
+            <div className="bg-black/80 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-white/20 text-center max-w-[260px]">
               <p className="text-xs sm:text-sm font-bold text-white leading-tight">
                 {guidanceSteps[currentStep].guidance}
               </p>
@@ -293,20 +293,20 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
 
         {/* Finished State: 3 Photos Strip */}
         {currentStep >= 3 && (
-          <div className="relative z-10 p-5 max-w-md w-full bg-stone-950/90 backdrop-blur-xl rounded-xl border border-stone-700 text-center mx-4">
+          <div className="relative z-10 p-4 sm:p-5 max-w-md w-[calc(100%-24px)] bg-stone-950/90 backdrop-blur-xl rounded-xl border border-stone-700 text-center mx-auto">
             <div className="flex items-center justify-center gap-2 mb-1">
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
               <h3 className="text-base font-bold text-white">
                 3 Angles Captured
               </h3>
             </div>
-            <p className="text-xs text-stone-300 mb-4">
+            <p className="text-xs text-stone-300 mb-3 sm:mb-4">
               Front, 45° angle, and top view ready for listing.
             </p>
 
-            <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-4">
               {capturedPhotos.map((url, idx) => (
-                <div key={idx} className="relative group rounded-lg overflow-hidden border border-white/30 h-28 bg-stone-900">
+                <div key={idx} className="relative group rounded-lg overflow-hidden border border-white/30 h-24 sm:h-28 bg-stone-900">
                   <img
                     src={url}
                     alt={`Photo ${idx + 1}`}

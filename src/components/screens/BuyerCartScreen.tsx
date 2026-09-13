@@ -34,8 +34,8 @@ export const BuyerCartScreen: React.FC<BuyerCartScreenProps> = ({
   if (cartItems.length === 0) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center select-none bg-white">
-        <div className="w-20 h-20 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-4 text-3xl">
-          🛒
+        <div className="w-16 h-16 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-4 text-[#565959]">
+          <ShoppingBag className="w-8 h-8 text-stone-400" />
         </div>
         <h2 className="text-xl font-bold text-[#111111] mb-1">
           {t('emptyCart')}
@@ -55,7 +55,7 @@ export const BuyerCartScreen: React.FC<BuyerCartScreenProps> = ({
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 pb-28 space-y-6 select-none bg-white text-[#111111]">
+    <div className="max-w-5xl mx-auto p-3 sm:p-6 pb-28 space-y-6 select-none bg-white text-[#111111]">
       {/* Top Header */}
       <div className="flex items-center justify-between border-b border-[#DDDDDD] pb-3">
         <div className="flex items-center gap-3">
@@ -97,12 +97,12 @@ export const BuyerCartScreen: React.FC<BuyerCartScreenProps> = ({
             return (
               <div
                 key={product.id}
-                className="border border-[#DDDDDD] rounded-lg p-3 sm:p-4 flex gap-3 sm:gap-4 bg-white hover:shadow-xs transition-shadow"
+                className="border border-[#DDDDDD] rounded-lg p-2.5 sm:p-4 flex gap-2.5 sm:gap-4 bg-white hover:shadow-xs transition-shadow"
               >
                 {/* Image */}
                 <div
                   onClick={() => onSelectProduct(product)}
-                  className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-[#F5F5F5] rounded-md overflow-hidden cursor-pointer"
+                  className="w-20 h-20 xs:w-24 xs:h-24 sm:w-28 sm:h-28 shrink-0 bg-[#F5F5F5] rounded-md overflow-hidden cursor-pointer"
                 >
                   <img
                     src={displayImage}

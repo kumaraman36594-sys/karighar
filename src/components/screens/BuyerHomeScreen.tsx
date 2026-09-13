@@ -84,7 +84,7 @@ export const BuyerHomeScreen: React.FC<BuyerHomeScreenProps> = ({
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-4 md:px-6 space-y-6 sm:space-y-8">
         {/* 3. Deal of the Day Section */}
         <DealOfTheDay
           products={products}
@@ -134,7 +134,7 @@ export const BuyerHomeScreen: React.FC<BuyerHomeScreenProps> = ({
             )}
           </div>
 
-          {/* Product Grid: 2 columns on phone, 3 on tablet, 4 on laptop, 12px card spacing */}
+          {/* Product Grid: 2 columns on phone, 3 on tablet, 4 on laptop */}
           {filteredProducts.length === 0 ? (
             <div className="text-center py-16 bg-[#F5F5F5] rounded-lg p-6 border border-[#DDDDDD]">
               <p className="text-[#565959] text-sm font-medium">
@@ -149,7 +149,7 @@ export const BuyerHomeScreen: React.FC<BuyerHomeScreenProps> = ({
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
               {filteredProducts.map((prod) => (
                 <ProductCard
                   key={prod.id}

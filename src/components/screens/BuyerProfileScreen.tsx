@@ -37,15 +37,15 @@ export const BuyerProfileScreen: React.FC<BuyerProfileScreenProps> = ({
   const [showAddressModal, setShowAddressModal] = useState(false);
 
   return (
-    <div className="max-w-3xl mx-auto p-4 sm:p-6 pb-28 space-y-6 select-none bg-white text-[#111111]">
+    <div className="max-w-3xl mx-auto p-3 sm:p-6 pb-28 space-y-4 sm:space-y-6 select-none bg-white text-[#111111]">
       {/* Profile Card Top */}
-      <div className="border border-[#DDDDDD] rounded-xl p-5 bg-gradient-to-r from-amber-50/60 via-orange-50/30 to-white flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-        <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#FF9900] to-rose-500 text-white flex items-center justify-center text-3xl font-extrabold shadow-sm border-2 border-white">
+      <div className="border border-[#DDDDDD] rounded-xl p-4 sm:p-5 bg-gradient-to-r from-amber-50/60 via-orange-50/30 to-white flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-[#FF9900] to-rose-500 text-white flex items-center justify-center text-2xl sm:text-3xl font-extrabold shadow-sm border-2 border-white">
           👤
         </div>
         <div className="flex-1 space-y-1">
           <div className="flex items-center justify-center sm:justify-start gap-2">
-            <h2 className="text-xl font-extrabold text-[#111111]">
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#111111]">
               Ananya Gupta
             </h2>
             <span className="text-[10px] bg-emerald-100 text-[#007600] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -56,23 +56,23 @@ export const BuyerProfileScreen: React.FC<BuyerProfileScreenProps> = ({
           <p className="text-xs text-[#565959] font-medium">
             {session.mobileNumber || '+91 98111 22334'} · New Delhi, India
           </p>
-          <div className="text-xs text-[#FF9900] font-semibold pt-1">
+          <div className="text-xs text-[#FF9900] font-semibold pt-0.5 sm:pt-1">
             Supporting 4 rural artisan cooperatives in Rajasthan, Bihar & Karnataka
           </div>
         </div>
       </div>
 
       {/* Switch to Seller Banner */}
-      <div className="border border-indigo-200 rounded-xl p-4 bg-indigo-50/70 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xl shrink-0 shadow-sm">
+      <div className="border border-indigo-200 rounded-xl p-3.5 sm:p-4 bg-indigo-50/70 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-lg sm:text-xl shrink-0 shadow-sm">
             🎨
           </div>
           <div>
-            <h3 className="font-bold text-sm text-indigo-950">
+            <h3 className="font-bold text-xs sm:text-sm text-indigo-950">
               Are you a Craftsman or Volunteer?
             </h3>
-            <p className="text-xs text-indigo-700">
+            <p className="text-[11px] sm:text-xs text-indigo-700">
               Switch to Artisan Seller Mode to list crafts with voice guidance and earn tokens.
             </p>
           </div>
@@ -80,7 +80,7 @@ export const BuyerProfileScreen: React.FC<BuyerProfileScreenProps> = ({
         <button
           type="button"
           onClick={onSwitchToSeller}
-          className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors shrink-0 cursor-pointer"
+          className="w-full xs:w-auto px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors shrink-0 cursor-pointer text-center"
         >
           {t('switchRole')}
         </button>

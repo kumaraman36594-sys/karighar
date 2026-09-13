@@ -37,7 +37,7 @@ export const BuyerOrdersScreen: React.FC<BuyerOrdersScreenProps> = ({
   });
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-28 space-y-6 select-none bg-white text-[#111111]">
+    <div className="max-w-4xl mx-auto p-3 sm:p-6 pb-28 space-y-6 select-none bg-white text-[#111111]">
       <div className="border-b border-[#DDDDDD] pb-3">
         <h1 className="text-xl sm:text-2xl font-extrabold text-[#111111]">
           {t('orders')}
@@ -48,7 +48,7 @@ export const BuyerOrdersScreen: React.FC<BuyerOrdersScreenProps> = ({
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[#DDDDDD] gap-4 sm:gap-8 overflow-x-auto text-xs sm:text-sm font-semibold">
+      <div className="flex border-b border-[#DDDDDD] gap-3 sm:gap-8 overflow-x-auto scrollbar-none text-xs sm:text-sm font-semibold">
         {[
           { id: 'all', label: t('allOrders') },
           { id: 'in_transit', label: t('inTransit') },

@@ -91,8 +91,8 @@ export const BuyerSearchScreen: React.FC<BuyerSearchScreenProps> = ({
   return (
     <div className="min-h-screen bg-[#FFFFFF] text-[#111111] pb-20 select-none">
       {/* Sticky Top Bar with Search */}
-      <div className="sticky top-0 z-40 bg-white border-b border-[#DDDDDD] p-3 shadow-xs">
-        <div className="max-w-5xl mx-auto flex items-center gap-2">
+      <div className="sticky top-0 z-40 bg-white border-b border-[#DDDDDD] p-2.5 sm:p-3 shadow-xs">
+        <div className="max-w-5xl mx-auto flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={onBack}
@@ -102,21 +102,21 @@ export const BuyerSearchScreen: React.FC<BuyerSearchScreenProps> = ({
             <ArrowLeft className="w-5 h-5" />
           </button>
 
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-[#565959] absolute left-3 top-3.5" />
+          <div className="relative flex-1 min-w-0">
+            <Search className="w-4 h-4 text-[#565959] absolute left-3 top-3 sm:top-3.5" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t('searchPlaceholder')}
               autoFocus
-              className="w-full h-11 pl-9 pr-10 rounded-md border border-[#DDDDDD] focus:border-[#FF9900] focus:outline-none text-sm text-[#111111] bg-white shadow-inner"
+              className="w-full h-10 sm:h-11 pl-8 sm:pl-9 pr-8 sm:pr-10 rounded-md border border-[#DDDDDD] focus:border-[#FF9900] focus:outline-none text-xs sm:text-sm text-[#111111] bg-white shadow-inner"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery('')}
-                className="absolute right-3 top-3 text-[#565959] hover:text-[#111111] cursor-pointer"
+                className="absolute right-2.5 sm:right-3 top-2.5 sm:top-3 text-[#565959] hover:text-[#111111] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -126,13 +126,13 @@ export const BuyerSearchScreen: React.FC<BuyerSearchScreenProps> = ({
           <VoiceInputButton
             language={language}
             onResult={(val) => setQuery(val)}
-            className="h-11 w-11 shrink-0 rounded-md border border-[#DDDDDD] bg-white"
+            className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-md border border-[#DDDDDD] bg-white"
           />
 
           <button
             type="button"
             onClick={() => setIsFilterOpen(true)}
-            className={`h-11 px-3 rounded-md border text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors ${
+            className={`h-10 px-2.5 sm:h-11 sm:px-3 rounded-md border text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors ${
               selectedCategory !== 'all' || maxPrice < 10000 || minRating > 0
                 ? 'bg-amber-50 border-[#FF9900] text-[#FF9900]'
                 : 'border-[#DDDDDD] hover:bg-[#F5F5F5] text-[#111111]'
@@ -165,7 +165,7 @@ export const BuyerSearchScreen: React.FC<BuyerSearchScreenProps> = ({
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto p-4 space-y-6">
+      <div className="max-w-5xl mx-auto px-2.5 sm:px-4 md:px-6 py-4 space-y-5 sm:space-y-6">
         {/* Quick Search Chips if query is empty */}
         {!query && (
           <div className="space-y-4">
@@ -229,7 +229,7 @@ export const BuyerSearchScreen: React.FC<BuyerSearchScreenProps> = ({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
             {filteredProducts.map((p) => (
               <ProductCard
                 key={p.id}
@@ -245,7 +245,7 @@ export const BuyerSearchScreen: React.FC<BuyerSearchScreenProps> = ({
       {/* Filter Modal / Drawer */}
       {isFilterOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex justify-end animate-fade-in">
-          <div className="w-full max-w-sm bg-white h-full p-5 flex flex-col justify-between overflow-y-auto">
+          <div className="w-full max-w-sm bg-white h-full p-4 sm:p-5 flex flex-col justify-between overflow-y-auto">
             <div className="space-y-5">
               <div className="flex items-center justify-between border-b border-[#DDDDDD] pb-3">
                 <h3 className="font-extrabold text-base text-[#111111]">

@@ -9,7 +9,8 @@ import {
   MicOff,
   ChevronDown,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Palette
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { Language, BuyerTab } from '../../types';

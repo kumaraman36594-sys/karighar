@@ -55,7 +55,7 @@ export const TokenDashboardScreen: React.FC<TokenDashboardScreenProps> = ({
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 pb-24 space-y-6">
+    <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 space-y-4 sm:space-y-6">
       {/* Toast */}
       {toastMessage && (
         <div className="fixed top-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 animate-fade-in">
@@ -99,28 +99,28 @@ export const TokenDashboardScreen: React.FC<TokenDashboardScreenProps> = ({
       </div>
 
       {/* Responsive Two-Column Grid on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
         {/* Left Column (5 cols): Main Token Card + Spend Options */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-4 sm:space-y-6">
           {/* Main Big Token Card */}
-          <div className="bg-gradient-to-br from-[#963717] via-[#B4431E] to-[#782c0f] rounded-xl p-6 sm:p-7 text-white shadow-md relative overflow-hidden space-y-5">
+          <div className="bg-gradient-to-br from-[#963717] via-[#B4431E] to-[#782c0f] rounded-xl p-4 sm:p-7 text-white shadow-md relative overflow-hidden space-y-4 sm:space-y-5">
             <div className="text-center space-y-1">
-              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 text-xs font-bold text-amber-200 backdrop-blur-xs mb-2">
+              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 text-xs font-bold text-amber-200 backdrop-blur-xs mb-1 sm:mb-2">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>कारीगर प्रोत्साहन टोकन (Karighar Tokens)</span>
               </div>
 
-              <div className="text-5xl sm:text-6xl font-black text-amber-300 drop-shadow-xs tracking-tight">
+              <div className="text-4xl sm:text-6xl font-black text-amber-300 drop-shadow-xs tracking-tight">
                 {tokenBalance}
               </div>
-              <div className="text-xs font-bold text-amber-100 uppercase tracking-widest">
+              <div className="text-[11px] sm:text-xs font-bold text-amber-100 uppercase tracking-widest">
                 कुल टोकन (Total Tokens)
               </div>
             </div>
 
             {/* 3 Stats Row */}
-            <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/20 text-center">
-              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-2 sm:p-2.5 border border-white/10">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 pt-3 border-t border-white/20 text-center">
+              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-1.5 sm:p-2.5 border border-white/10">
                 <span className="text-[10px] text-amber-100 font-semibold flex items-center justify-center gap-1">
                   <Trophy className="w-3 h-3" /> टियर
                 </span>
@@ -129,7 +129,7 @@ export const TokenDashboardScreen: React.FC<TokenDashboardScreenProps> = ({
                 </span>
               </div>
 
-              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-2 sm:p-2.5 border border-white/10">
+              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-1.5 sm:p-2.5 border border-white/10">
                 <span className="text-[10px] text-amber-100 font-semibold flex items-center justify-center gap-1">
                   <Users className="w-3 h-3" /> रेफरल
                 </span>
@@ -138,7 +138,7 @@ export const TokenDashboardScreen: React.FC<TokenDashboardScreenProps> = ({
                 </span>
               </div>
 
-              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-2 sm:p-2.5 border border-white/10">
+              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-1.5 sm:p-2.5 border border-white/10">
                 <span className="text-[10px] text-amber-100 font-semibold flex items-center justify-center gap-1">
                   <Wallet className="w-3 h-3" /> मूल्य
                 </span>
@@ -148,7 +148,7 @@ export const TokenDashboardScreen: React.FC<TokenDashboardScreenProps> = ({
               </div>
             </div>
 
-            <p className="text-center text-[11px] text-amber-100/90 font-medium">
+            <p className="text-center text-[10px] sm:text-[11px] text-amber-100/90 font-medium">
               ₹1 = 1 टोकन नकद मूल्य • सीधे UPI / बैंक में ट्रांसफर या छूट प्राप्त करें
             </p>
           </div>

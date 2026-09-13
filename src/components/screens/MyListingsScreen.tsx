@@ -37,12 +37,12 @@ export const MyListingsScreen: React.FC<MyListingsScreenProps> = ({
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 pb-28 space-y-6 relative">
+    <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 space-y-4 sm:space-y-6 relative">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-stone-900 flex items-center gap-2.5">
-            <Package className="w-6 h-6 text-[#B4431E]" />
+          <h1 className="text-xl sm:text-2xl font-extrabold text-stone-900 flex items-center gap-2 sm:gap-2.5">
+            <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[#B4431E]" />
             <span>मेरे उत्पाद (My Products)</span>
           </h1>
           <p className="text-xs text-stone-500 font-medium mt-0.5">
@@ -69,24 +69,24 @@ export const MyListingsScreen: React.FC<MyListingsScreenProps> = ({
       )}
 
       {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 p-4 bg-white rounded-xl border border-stone-200 shadow-xs text-center">
-        <div className="p-2">
-          <span className="text-xl sm:text-2xl font-extrabold text-emerald-700 block">
+      <div className="grid grid-cols-3 gap-1 sm:gap-4 p-2.5 sm:p-4 bg-white rounded-xl border border-stone-200 shadow-xs text-center">
+        <div className="p-1 sm:p-2">
+          <span className="text-lg sm:text-2xl font-extrabold text-emerald-700 block">
             {activeCount}
           </span>
-          <span className="text-xs font-semibold text-stone-500">सक्रिय (Active)</span>
+          <span className="text-[10px] sm:text-xs font-semibold text-stone-500 truncate block">सक्रिय</span>
         </div>
-        <div className="p-2 border-x border-stone-100">
-          <span className="text-xl sm:text-2xl font-extrabold text-[#B4431E] block">
+        <div className="p-1 sm:p-2 border-x border-stone-100">
+          <span className="text-lg sm:text-2xl font-extrabold text-[#B4431E] block">
             {salesCount}
           </span>
-          <span className="text-xs font-semibold text-stone-500">बिक्री (Sales)</span>
+          <span className="text-[10px] sm:text-xs font-semibold text-stone-500 truncate block">बिक्री</span>
         </div>
-        <div className="p-2">
-          <span className="text-xl sm:text-2xl font-extrabold text-stone-900 block">
+        <div className="p-1 sm:p-2">
+          <span className="text-lg sm:text-2xl font-extrabold text-stone-900 block truncate">
             {totalRevenue}
           </span>
-          <span className="text-xs font-semibold text-stone-500">कुल कमाई (Revenue)</span>
+          <span className="text-[10px] sm:text-xs font-semibold text-stone-500 truncate block">कुल कमाई</span>
         </div>
       </div>
 
@@ -109,7 +109,7 @@ export const MyListingsScreen: React.FC<MyListingsScreenProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
           {products.map((product, idx) => (
             <div
               key={product.id}

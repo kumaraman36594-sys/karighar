@@ -226,24 +226,24 @@ export const VoiceQaScreen: React.FC<VoiceQaScreenProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col h-[calc(100vh-100px)] min-h-[500px] select-none p-2 sm:p-4">
+    <div className="w-full max-w-4xl mx-auto flex flex-col h-[calc(100vh-100px)] min-h-[480px] select-none p-2 sm:p-4">
       {/* Top Header Card */}
-      <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-xs mb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-[#B4431E]/10 text-[#B4431E] flex items-center justify-center">
-              <MessageSquare className="w-5 h-5" />
+      <div className="bg-white rounded-xl p-3 sm:p-4 border border-stone-200 shadow-xs mb-2 sm:mb-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#B4431E]/10 text-[#B4431E] flex items-center justify-center shrink-0">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-sm sm:text-base text-stone-900">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-extrabold text-xs sm:text-base text-stone-900 truncate">
                   {t('voiceQaTitle')}
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-sm bg-stone-100 text-stone-700">
+                <span className="text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-sm bg-stone-100 text-stone-700 shrink-0">
                   Step {Math.min(currentQIndex + 1, 5)} / 5
                 </span>
               </div>
-              <p className="text-xs text-stone-500">
+              <p className="text-[11px] sm:text-xs text-stone-500 truncate">
                 {t('voiceQaDesc')}
               </p>
             </div>
@@ -254,12 +254,12 @@ export const VoiceQaScreen: React.FC<VoiceQaScreenProps> = ({
             language={language}
             isMuted={isAudioMuted}
             label="सुनें"
-            className="bg-stone-50 border-stone-200 text-stone-700"
+            className="bg-stone-50 border-stone-200 text-stone-700 shrink-0"
           />
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-stone-100 rounded-full h-1.5 mt-3 overflow-hidden">
+        <div className="w-full bg-stone-100 rounded-full h-1.5 mt-2.5 sm:mt-3 overflow-hidden">
           <div 
             className="bg-[#B4431E] h-full rounded-full transition-all duration-300"
             style={{ width: `${((currentQIndex + 1) / 5) * 100}%` }}
@@ -391,7 +391,7 @@ export const VoiceQaScreen: React.FC<VoiceQaScreenProps> = ({
           ) : (
             <div className="space-y-2.5">
               {/* Quick Presets */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                 <span className="text-[10px] font-bold text-stone-400 uppercase shrink-0">
                   Quick Speak:
                 </span>
@@ -400,7 +400,7 @@ export const VoiceQaScreen: React.FC<VoiceQaScreenProps> = ({
                     key={pIdx}
                     type="button"
                     onClick={() => handleAnswer(preset)}
-                    className="min-h-[40px] px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 text-xs font-medium text-stone-800 shrink-0 transition-colors cursor-pointer active:scale-95"
+                    className="min-h-[38px] px-2.5 sm:px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 text-xs font-medium text-stone-800 shrink-0 transition-colors cursor-pointer active:scale-95"
                   >
                     {preset}
                   </button>
@@ -408,12 +408,12 @@ export const VoiceQaScreen: React.FC<VoiceQaScreenProps> = ({
               </div>
 
               {/* Mic & Input */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   type="button"
                   onClick={toggleVoiceInput}
                   id="qa-voice-mic-btn"
-                  className={`min-h-[48px] min-w-[48px] rounded-lg flex items-center justify-center text-white shadow-xs transition-all shrink-0 cursor-pointer active:scale-95 ${
+                  className={`min-h-[44px] min-w-[44px] sm:min-h-[48px] sm:min-w-[48px] rounded-lg flex items-center justify-center text-white shadow-xs transition-all shrink-0 cursor-pointer active:scale-95 ${
                     isListening
                       ? 'bg-red-600 animate-pulse'
                       : 'bg-[#B4431E] hover:bg-[#9E3514]'
@@ -437,7 +437,7 @@ export const VoiceQaScreen: React.FC<VoiceQaScreenProps> = ({
                       ? 'सुन रहे हैं... बोलिए...'
                       : 'उत्तर बोलें या टाइप करें...'
                   }
-                  className="flex-1 min-h-[48px] px-3 rounded-lg border border-stone-300 focus:border-[#B4431E] focus:outline-none text-xs sm:text-sm font-medium bg-white"
+                  className="flex-1 min-h-[44px] sm:min-h-[48px] px-2.5 sm:px-3 rounded-lg border border-stone-300 focus:border-[#B4431E] focus:outline-none text-xs sm:text-sm font-medium bg-white min-w-0"
                 />
 
                 <button
@@ -446,7 +446,7 @@ export const VoiceQaScreen: React.FC<VoiceQaScreenProps> = ({
                     if (inputVal.trim()) handleAnswer(inputVal.trim());
                   }}
                   disabled={!inputVal.trim()}
-                  className={`min-h-[48px] px-4 rounded-lg font-bold text-xs flex items-center gap-1 cursor-pointer transition-colors ${
+                  className={`min-h-[44px] sm:min-h-[48px] px-3 sm:px-4 rounded-lg font-bold text-xs flex items-center gap-1 cursor-pointer transition-colors shrink-0 ${
                     inputVal.trim()
                       ? 'bg-[#B4431E] hover:bg-[#9E3514] text-white shadow-xs'
                       : 'bg-stone-100 text-stone-400 cursor-not-allowed'
