@@ -12,7 +12,6 @@ interface TierBadgeProps {
 
 export const TierBadge: React.FC<TierBadgeProps> = ({
   tierLevel,
-  showEmoji = true,
   size = 'md',
   className = '',
   onClick,
@@ -20,28 +19,29 @@ export const TierBadge: React.FC<TierBadgeProps> = ({
   const info = TokenService.getTierInfo(tierLevel);
 
   const sizeClasses = {
-    sm: 'px-2 py-0.5 text-[11px] gap-1 font-bold',
-    md: 'px-3 py-1 text-xs gap-1.5 font-extrabold',
-    lg: 'px-4 py-1.5 text-sm gap-2 font-black',
+    sm: 'px-2 py-0.5 text-[11px] gap-1 font-semibold',
+    md: 'px-2.5 py-1 text-xs gap-1.5 font-bold',
+    lg: 'px-3 py-1.5 text-sm gap-2 font-bold',
   };
 
   const badgeStyles: Record<number, string> = {
-    0: 'bg-amber-100/90 text-amber-950 border-amber-400 shadow-amber-200/50',
-    1: 'bg-stone-200/90 text-stone-900 border-stone-400 shadow-stone-200/50',
-    2: 'bg-amber-200 text-amber-950 border-amber-500 shadow-amber-300/60',
-    3: 'bg-teal-100 text-teal-950 border-teal-400 shadow-teal-200/60',
-    4: 'bg-gradient-to-r from-amber-200 via-stone-100 to-amber-200 text-stone-900 border-amber-400 shadow-amber-200/70',
+    0: 'bg-stone-100 text-stone-800 border-stone-300',
+    1: 'bg-amber-50 text-amber-900 border-amber-300',
+    2: 'bg-emerald-50 text-emerald-900 border-emerald-300',
+    3: 'bg-sky-50 text-sky-900 border-sky-300',
+    4: 'bg-stone-900 text-amber-300 border-stone-900',
   };
 
   return (
     <span
       onClick={onClick}
-      className={`inline-flex items-center rounded-full border shadow-xs transition-transform ${
+      className={`inline-flex items-center rounded-md border text-xs transition-colors ${
         badgeStyles[info.tier] || badgeStyles[0]
-      } ${sizeClasses[size]} ${onClick ? 'cursor-pointer hover:scale-105' : ''} ${className}`}
+      } ${sizeClasses[size]} ${onClick ? 'cursor-pointer hover:opacity-85' : ''} ${className}`}
     >
-      <Award className="w-3.5 h-3.5 shrink-0 opacity-80" />
+      <Award className="w-3.5 h-3.5 shrink-0 text-amber-600" />
       <span>{info.name}</span>
     </span>
   );
 };
+

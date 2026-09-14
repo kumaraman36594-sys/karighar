@@ -2,24 +2,32 @@ import { Language } from '../types';
 
 export const LANGUAGE_LOCALES: Record<Language, string> = {
   hi: 'hi-IN',
-  en: 'en-US',
+  en: 'en-IN',
   ta: 'ta-IN',
   te: 'te-IN',
   bn: 'bn-IN',
   mr: 'mr-IN',
   gu: 'gu-IN',
   kn: 'kn-IN',
+  mai: 'hi-IN',
+  bho: 'hi-IN',
+  or: 'or-IN',
+  pa: 'pa-IN',
 };
 
 export const LANGUAGE_NAMES: Record<Language, string> = {
   hi: 'हिन्दी (Hindi)',
-  en: 'English',
+  en: 'English (Indian)',
   ta: 'தமிழ் (Tamil)',
   te: 'తెలుగు (Telugu)',
   bn: 'বাংলা (Bengali)',
   mr: 'मराठी (Marathi)',
   gu: 'ગુજરાતી (Gujarati)',
   kn: 'ಕನ್ನಡ (Kannada)',
+  mai: 'मैथिली (Maithili)',
+  bho: 'भोजपुरी (Bhojpuri)',
+  or: 'ଓଡ଼ିଆ (Odia)',
+  pa: 'ਪੰਜਾਬੀ (Punjabi)',
 };
 
 // Check if Speech Synthesis is available
@@ -32,6 +40,8 @@ export const isSttSupported = (): boolean => {
   return typeof window !== 'undefined' && 
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 };
+
+let hasLoggedVoices = false;
 
 // Text-to-Speech function following Section 7 specification
 export const speak = (
@@ -60,7 +70,24 @@ export const speak = (
       ? window.speechSynthesis.getVoices() 
       : [];
     const voices = Array.isArray(rawVoices) ? rawVoices : [];
-    const matchingVoice = voices.find(v => v?.lang && v.lang.replace('_', '-').startsWith(targetLocale.slice(0, 2)));
+
+    // Log all available voices once on first call to verify Indian voices presence
+    if (!hasLoggedVoices && voices.length > 0) {
+      hasLoggedVoices = true;
+      console.log('[TTS] Available voices in browser:', voices.map(v => `${v.name} (${v.lang})`));
+      const indianVoices = voices.filter(v => v?.lang && (v.lang.includes('-IN') || v.lang.includes('_IN')));
+      if (indianVoices.length === 0) {
+        console.warn('[TTS] Note: No Indian voices (*-IN) detected in this browser/device. If Indian accent is unavailable, it is a device/OS voice pack limitation, not a code bug.');
+      } else {
+        console.log('[TTS] Detected Indian voices:', indianVoices.map(v => `${v.name} (${v.lang})`));
+      }
+    }
+
+    // Prefer exact locale match first (e.g. en-IN), then fall back to language-only prefix
+    const exactMatch = voices.find(v => v?.lang && (v.lang === targetLocale || v.lang.replace('_', '-') === targetLocale));
+    const looseMatch = voices.find(v => v?.lang && v.lang.replace('_', '-').startsWith(targetLocale.slice(0, 2)));
+    const matchingVoice = exactMatch || looseMatch;
+
     if (matchingVoice) {
       utterance.voice = matchingVoice;
     }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Sparkles, User, MapPin, Building, Palette, Languages, Users, UserCheck } from 'lucide-react';
+import { ArrowRight, Sparkles, User, MapPin, Building, Palette, Languages, Users, Check } from 'lucide-react';
 import { Artist, CraftType, Language } from '../../types';
 import { getTranslation } from '../../utils/translations';
-import { speak, stopSpeech } from '../../utils/speech';
+import { speak, stopSpeech, LANGUAGE_NAMES } from '../../utils/speech';
 import { AudioSpeakerButton } from '../common/AudioSpeakerButton';
 import { VoiceInputButton } from '../common/VoiceInputButton';
 
@@ -15,17 +15,16 @@ interface ArtistRegisterScreenProps {
 interface CraftItem {
   id: CraftType;
   label: string;
-  emoji: string;
   image: string;
 }
 
 const CRAFTS: CraftItem[] = [
-  { id: 'Pottery', label: 'मिट्टी के बर्तन / पॉटरी', emoji: '🏺', image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=200&auto=format&fit=crop&q=80' },
-  { id: 'Textile', label: 'हथकरघा / ब्लॉक प्रिंट', emoji: '🧵', image: 'https://images.unsplash.com/photo-1606744888344-493238955037?w=200&auto=format&fit=crop&q=80' },
-  { id: 'Woodwork', label: 'काष्ठ कला / नक्काशी', emoji: '🪵', image: 'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=200&auto=format&fit=crop&q=80' },
-  { id: 'Jewelry', label: 'मीनाकारी / धातु आभूषण', emoji: '💍', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=200&auto=format&fit=crop&q=80' },
-  { id: 'Painting', label: 'मधुबनी / लोक चित्रकला', emoji: '🎨', image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=200&auto=format&fit=crop&q=80' },
-  { id: 'Other', label: 'अन्य पारंपरिक शिल्प', emoji: '✨', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=200&auto=format&fit=crop&q=80' },
+  { id: 'Pottery', label: 'मिट्टी के बर्तन / पॉटरी', image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=200&auto=format&fit=crop&q=80' },
+  { id: 'Textile', label: 'हथकरघा / ब्लॉक प्रिंट', image: 'https://images.unsplash.com/photo-1606744888344-493238955037?w=200&auto=format&fit=crop&q=80' },
+  { id: 'Woodwork', label: 'काष्ठ कला / नक्काशी', image: 'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=200&auto=format&fit=crop&q=80' },
+  { id: 'Jewelry', label: 'मीनाकारी / धातु आभूषण', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=200&auto=format&fit=crop&q=80' },
+  { id: 'Painting', label: 'मधुबनी / लोक चित्रकला', image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=200&auto=format&fit=crop&q=80' },
+  { id: 'Other', label: 'अन्य पारंपरिक शिल्प', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=200&auto=format&fit=crop&q=80' },
 ];
 
 export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
@@ -85,206 +84,160 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24">
-      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-        {/* Top Header with Progress indicator */}
+    <div className="min-h-screen bg-stone-100 p-4 sm:p-5 max-w-xl mx-auto flex flex-col justify-between py-4 select-none">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Top Header with Progress indicator (1 of 3 steps) */}
         <div>
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-900 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
-              कदम 1 / 3 (Step 1 of 3)
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <span className="text-[11px] font-semibold tracking-wider text-stone-700 bg-stone-200/80 px-2.5 py-1 rounded">
+              Step 1 of 3 (कदम 1 / 3)
             </span>
             <div className="flex items-center gap-1.5">
-              <span className="w-8 h-2 rounded-full bg-[#B4431E]"></span>
-              <span className="w-2.5 h-2 rounded-full bg-stone-200"></span>
-              <span className="w-2.5 h-2 rounded-full bg-stone-200"></span>
+              <span className="w-5 h-1.5 rounded-full bg-stone-900"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-stone-300"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-stone-300"></span>
             </div>
           </div>
 
-          <div className="flex items-start justify-between gap-2.5 sm:gap-3 bg-white p-3.5 sm:p-5 rounded-xl border border-stone-200 shadow-xs">
-            <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-[#B4431E] shrink-0 mt-0.5">
-                <UserCheck className="w-5 h-5 sm:w-6 sm:h-6" />
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-xl sm:text-3xl font-extrabold text-stone-900 leading-tight truncate">
-                  {t.registerArtist}
-                </h1>
-                <p className="text-xs sm:text-sm text-stone-600 mt-0.5 sm:mt-1 truncate">
-                  पहला कारीगर जोड़ें या अपना विवरण दर्ज करें
-                </p>
-              </div>
+          <div className="flex items-start justify-between gap-3 bg-white p-3.5 rounded-xl border border-stone-200">
+            <div>
+              <h1 className="text-lg sm:text-xl font-bold text-stone-900 leading-tight">
+                {t.registerArtist}
+              </h1>
+              <p className="text-xs text-stone-500 mt-0.5">
+                Register artisan profile or helper credentials
+              </p>
             </div>
             <AudioSpeakerButton
               text={`${t.registerArtist}। कारीगर का नाम, गाँव और शिल्प का प्रकार दर्ज करें।`}
               language={language}
-              size="md"
-              variant="primary"
+              size="sm"
               title="शीर्षक सुनें"
               id="artist-register-hear-title-btn"
-              className="shrink-0"
             />
           </div>
         </div>
 
-        {/* Form Container */}
-        <div className="bg-white rounded-xl p-3.5 sm:p-6 border border-stone-200 shadow-xs space-y-5 sm:space-y-6">
-          {/* Responsive 2-column grid for primary text inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* 1. Name */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-stone-800 flex items-center gap-2">
-                  <User className="w-4 h-4 text-[#B4431E]" />
-                  <span>कारीगर का नाम (Name) *</span>
-                </label>
-                <div className="flex items-center gap-1">
-                  <AudioSpeakerButton
-                    text="कारीगर का नाम दर्ज करें या बोलकर बताएं।"
-                    language={language}
-                    size="sm"
-                    variant="card"
-                    title="सुनें"
-                    id="hear-name-field-btn"
-                  />
-                  <VoiceInputButton
-                    language={language}
-                    onTranscript={(res) => setName(res)}
-                    size="sm"
-                    promptText="कारीगर का नाम बोलिए..."
-                    id="voice-name-input-btn"
-                  />
-                </div>
-              </div>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="उदा. रमेश कुमार (e.g. Ramesh Kumar)"
-                className="w-full min-h-[48px] h-12 px-3.5 rounded-lg border border-stone-300 text-base font-semibold text-stone-900 focus:border-[#B4431E] focus:outline-hidden bg-stone-50/40"
-              />
-            </div>
-
-            {/* 2. Village */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-stone-800 flex items-center gap-2">
-                  <Building className="w-4 h-4 text-[#B4431E]" />
-                  <span>गाँव या कस्बा (Village) *</span>
-                </label>
-                <div className="flex items-center gap-1">
-                  <AudioSpeakerButton
-                    text="गाँव या कस्बा दर्ज करें या बोलकर बताएं।"
-                    language={language}
-                    size="sm"
-                    variant="card"
-                    title="सुनें"
-                    id="hear-village-field-btn"
-                  />
-                  <VoiceInputButton
-                    language={language}
-                    onTranscript={(res) => setVillage(res)}
-                    size="sm"
-                    promptText="गाँव का नाम बोलिए..."
-                    id="voice-village-input-btn"
-                  />
-                </div>
-              </div>
-              <input
-                type="text"
-                required
-                value={village}
-                onChange={(e) => setVillage(e.target.value)}
-                placeholder="उदा. बगरू (e.g. Bagru)"
-                className="w-full min-h-[48px] h-12 px-3.5 rounded-lg border border-stone-300 text-base font-semibold text-stone-900 focus:border-[#B4431E] focus:outline-hidden bg-stone-50/40"
-              />
-            </div>
-
-            {/* 3. District */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-stone-800 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-[#B4431E]" />
-                  <span>ज़िला / राज्य (District) *</span>
-                </label>
-                <div className="flex items-center gap-1">
-                  <AudioSpeakerButton
-                    text="ज़िला और राज्य बताएं।"
-                    language={language}
-                    size="sm"
-                    variant="card"
-                    title="सुनें"
-                    id="hear-district-field-btn"
-                  />
-                  <VoiceInputButton
-                    language={language}
-                    onTranscript={(res) => setDistrict(res)}
-                    size="sm"
-                    promptText="ज़िला और राज्य बोलिए..."
-                    id="voice-district-input-btn"
-                  />
-                </div>
-              </div>
-              <input
-                type="text"
-                required
-                value={district}
-                onChange={(e) => setDistrict(e.target.value)}
-                placeholder="उदा. जयपुर, राजस्थान (e.g. Jaipur)"
-                className="w-full min-h-[48px] h-12 px-3.5 rounded-lg border border-stone-300 text-base font-semibold text-stone-900 focus:border-[#B4431E] focus:outline-hidden bg-stone-50/40"
-              />
-            </div>
-
-            {/* 4. Language */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-stone-800 flex items-center gap-2">
-                  <Languages className="w-4 h-4 text-[#B4431E]" />
-                  <span>कारीगर की भाषा (Language)</span>
-                </label>
+        {/* Form Fields */}
+        <div className="bg-white rounded-xl p-4 sm:p-5 border border-stone-200 shadow-xs space-y-4">
+          {/* 1. Name */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-stone-800 flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-stone-600" />
+                <span>Artisan Name (कारीगर का नाम) *</span>
+              </label>
+              <div className="flex items-center gap-1">
                 <AudioSpeakerButton
-                  text="कारीगर की पसंदीदा भाषा चुनें।"
+                  text="कारीगर का नाम दर्ज करें या बोलकर बताएं।"
                   language={language}
                   size="sm"
-                  variant="card"
                   title="सुनें"
-                  id="hear-lang-field-btn"
+                  id="hear-name-field-btn"
+                />
+                <VoiceInputButton
+                  language={language}
+                  onTranscript={(res) => setName(res)}
+                  size="sm"
+                  promptText="कारीगर का नाम बोलिए..."
+                  id="voice-name-input-btn"
                 />
               </div>
-              <select
-                value={prefLang}
-                onChange={(e) => setPrefLang(e.target.value as Language)}
-                className="w-full min-h-[48px] h-12 px-3.5 rounded-lg border border-stone-300 text-base font-semibold text-stone-900 bg-white focus:border-[#B4431E] focus:outline-hidden cursor-pointer"
-              >
-                <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
-                <option value="en">🇮🇳 English</option>
-                <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
-                <option value="te">🇮🇳 తెలుగు (Telugu)</option>
-                <option value="bn">🇮🇳 বাংলা (Bengali)</option>
-                <option value="mr">🇮🇳 मराठी (Marathi)</option>
-                <option value="gu">🇮🇳 ગુજરાતી (Gujarati)</option>
-                <option value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</option>
-              </select>
             </div>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Ramesh Kumar"
+              className="w-full h-10 px-3 rounded-lg border border-stone-300 text-xs sm:text-sm font-medium text-stone-900 focus:border-stone-900 focus:outline-hidden bg-white"
+            />
           </div>
 
-          {/* 5. Craft Type Selection */}
-          <div className="pt-2">
-            <div className="flex items-center justify-between mb-2.5">
-              <label className="text-sm font-bold text-stone-800 flex items-center gap-2">
-                <Palette className="w-4 h-4 text-[#B4431E]" />
-                <span>कला / शिल्प का प्रकार (Craft) *</span>
+          {/* 2. Village */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-stone-800 flex items-center gap-1.5">
+                <Building className="w-3.5 h-3.5 text-stone-600" />
+                <span>Village or Town (गाँव / कस्बा) *</span>
+              </label>
+              <div className="flex items-center gap-1">
+                <AudioSpeakerButton
+                  text="गाँव या कस्बा दर्ज करें या बोलकर बताएं।"
+                  language={language}
+                  size="sm"
+                  title="सुनें"
+                  id="hear-village-field-btn"
+                />
+                <VoiceInputButton
+                  language={language}
+                  onTranscript={(res) => setVillage(res)}
+                  size="sm"
+                  promptText="गाँव का नाम बोलिए..."
+                  id="voice-village-input-btn"
+                />
+              </div>
+            </div>
+            <input
+              type="text"
+              required
+              value={village}
+              onChange={(e) => setVillage(e.target.value)}
+              placeholder="e.g. Bagru"
+              className="w-full h-10 px-3 rounded-lg border border-stone-300 text-xs sm:text-sm font-medium text-stone-900 focus:border-stone-900 focus:outline-hidden bg-white"
+            />
+          </div>
+
+          {/* 3. District */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-stone-800 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-stone-600" />
+                <span>District / State (ज़िला / राज्य) *</span>
+              </label>
+              <div className="flex items-center gap-1">
+                <AudioSpeakerButton
+                  text="ज़िला और राज्य बताएं।"
+                  language={language}
+                  size="sm"
+                  title="सुनें"
+                  id="hear-district-field-btn"
+                />
+                <VoiceInputButton
+                  language={language}
+                  onTranscript={(res) => setDistrict(res)}
+                  size="sm"
+                  promptText="ज़िला और राज्य बोलिए..."
+                  id="voice-district-input-btn"
+                />
+              </div>
+            </div>
+            <input
+              type="text"
+              required
+              value={district}
+              onChange={(e) => setDistrict(e.target.value)}
+              placeholder="e.g. Jaipur, Rajasthan"
+              className="w-full h-10 px-3 rounded-lg border border-stone-300 text-xs sm:text-sm font-medium text-stone-900 focus:border-stone-900 focus:outline-hidden bg-white"
+            />
+          </div>
+
+          {/* 4. Craft */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-stone-800 flex items-center gap-1.5">
+                <Palette className="w-3.5 h-3.5 text-stone-600" />
+                <span>Craft Speciality (शिल्प प्रकार) *</span>
               </label>
               <AudioSpeakerButton
-                text="शिल्प का प्रकार चुनें। मिट्टी के बर्तन, हथकरघा, काष्ठ कला या अन्य।"
+                text="शिल्प का प्रकार चुनें।"
                 language={language}
                 size="sm"
-                variant="card"
                 title="सुनें"
                 id="hear-craft-field-btn"
               />
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {CRAFTS.map((c) => {
                 const isSelected = craft === c.id;
                 return (
@@ -295,23 +248,23 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
                       setCraft(c.id);
                       if (!isAudioMuted) speak(c.label, language);
                     }}
-                    className={`min-h-[52px] sm:min-h-[56px] p-2 sm:p-2.5 rounded-xl border-2 text-left flex items-center gap-2 sm:gap-3 transition-all cursor-pointer ${
+                    className={`p-2 rounded-lg border text-left flex items-center gap-2.5 transition-colors cursor-pointer ${
                       isSelected
-                        ? 'border-[#B4431E] bg-orange-50/70 shadow-xs ring-2 ring-[#B4431E]/20'
-                        : 'border-stone-200 hover:border-amber-300 bg-stone-50/40'
+                        ? 'border-stone-900 bg-stone-50 font-semibold'
+                        : 'border-stone-200 hover:border-stone-300 bg-white'
                     }`}
                   >
                     <img
                       src={c.image}
                       alt={c.label}
-                      className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg object-cover shrink-0 border border-stone-200"
+                      className="w-9 h-9 rounded object-cover shrink-0 border border-stone-200"
                       referrerPolicy="no-referrer"
                     />
                     <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-bold text-stone-900 truncate">
-                        {c.emoji} {c.id}
+                      <div className="text-xs font-bold text-stone-900 truncate">
+                        {c.id}
                       </div>
-                      <div className="text-[10px] sm:text-[11px] text-stone-500 truncate mt-0.5">
+                      <div className="text-[11px] text-stone-500 truncate">
                         {c.label}
                       </div>
                     </div>
@@ -321,26 +274,56 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
             </div>
           </div>
 
-          {/* 6. Relationship Selection */}
-          <div className="pt-4 border-t border-stone-200">
-            <div className="flex items-center justify-between mb-2.5">
-              <label className="text-sm font-bold text-stone-800 flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#B4431E]" />
-                <span>कारीगर से रिश्ता (Relationship)</span>
+          {/* 5. Language */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-stone-800 flex items-center gap-1.5">
+                <Languages className="w-3.5 h-3.5 text-stone-600" />
+                <span>Preferred Language (भाषा)</span>
               </label>
               <AudioSpeakerButton
-                text="कारीगर से अपना संबंध बताएं। क्या आप खुद कारीगर हैं या किसी कारीगर की मदद कर रहे हैं?"
+                text="कारीगर की पसंदीदा भाषा चुनें।"
                 language={language}
                 size="sm"
-                variant="card"
+                title="सुनें"
+                id="hear-lang-field-btn"
+              />
+            </div>
+            <select
+              value={prefLang}
+              onChange={(e) => setPrefLang(e.target.value as Language)}
+              className="w-full h-10 px-3 rounded-lg border border-stone-300 text-xs sm:text-sm font-medium text-stone-900 bg-white focus:border-stone-900 focus:outline-hidden cursor-pointer"
+            >
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="en">English</option>
+              <option value="ta">தமிழ் (Tamil)</option>
+              <option value="te">తెలుగు (Telugu)</option>
+              <option value="bn">বাংলা (Bengali)</option>
+              <option value="mr">मराठी (Marathi)</option>
+              <option value="gu">ગુજરાતી (Gujarati)</option>
+              <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            </select>
+          </div>
+
+          {/* 6. Relationship */}
+          <div className="pt-2 border-t border-stone-100">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-stone-800 flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-stone-600" />
+                <span>Relationship (कारीगर से रिश्ता)</span>
+              </label>
+              <AudioSpeakerButton
+                text="क्या आप खुद कारीगर हैं या सहायता कर रहे हैं?"
+                language={language}
+                size="sm"
                 title="सुनें"
                 id="hear-rel-field-btn"
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <label className={`flex items-start gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+            <div className="space-y-2">
+              <label className={`flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-colors ${
                 relationship === 'self'
-                  ? 'border-[#B4431E] bg-orange-50/60 shadow-xs'
+                  ? 'border-stone-900 bg-stone-50'
                   : 'border-stone-200 hover:bg-stone-50'
               }`}>
                 <input
@@ -349,21 +332,21 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
                   value="self"
                   checked={relationship === 'self'}
                   onChange={() => setRelationship('self')}
-                  className="mt-1 w-4 h-4 text-[#B4431E] focus:ring-[#B4431E]"
+                  className="w-4 h-4 text-stone-900 accent-stone-900"
                 />
                 <div>
-                  <span className="text-sm font-bold text-stone-900 block">
-                    मैं खुद यह कारीगर हूँ (I am this artisan)
+                  <span className="text-xs sm:text-sm font-semibold text-stone-900 block">
+                    I am this artisan (मैं खुद कारीगर हूँ)
                   </span>
-                  <span className="text-xs text-stone-500 mt-0.5 block">
-                    मैं अपने बनाए हस्तशिल्प सीधे बाज़ार में बेचूंगा
+                  <span className="text-[11px] text-stone-500 block">
+                    Direct producer selling personal crafts
                   </span>
                 </div>
               </label>
 
-              <label className={`flex items-start gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+              <label className={`flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-colors ${
                 relationship === 'helper'
-                  ? 'border-[#B4431E] bg-orange-50/60 shadow-xs'
+                  ? 'border-stone-900 bg-stone-50'
                   : 'border-stone-200 hover:bg-stone-50'
               }`}>
                 <input
@@ -372,14 +355,14 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
                   value="helper"
                   checked={relationship === 'helper'}
                   onChange={() => setRelationship('helper')}
-                  className="mt-1 w-4 h-4 text-[#B4431E] focus:ring-[#B4431E]"
+                  className="w-4 h-4 text-stone-900 accent-stone-900"
                 />
                 <div>
-                  <span className="text-sm font-bold text-stone-900 block">
-                    मैं कारीगर की मदद कर रहा हूँ (Helper / Mitra)
+                  <span className="text-xs sm:text-sm font-semibold text-stone-900 block">
+                    I am assisting the artisan (सहायक / परिवार / मित्र)
                   </span>
-                  <span className="text-xs text-stone-500 mt-0.5 block">
-                    स्मार्टफ़ोन न चलाने वाले गाँव के बुजुर्ग या कारीगर की सहायता
+                  <span className="text-[11px] text-stone-500 block">
+                    Assisting elderly or non-smartphone artisans
                   </span>
                 </div>
               </label>
@@ -387,18 +370,19 @@ export const ArtistRegisterScreen: React.FC<ArtistRegisterScreenProps> = ({
           </div>
         </div>
 
-        {/* Bottom Save Button */}
-        <div className="pt-2">
+        {/* Bottom Button */}
+        <div>
           <button
             type="submit"
             id="artist-save-continue-btn"
-            className="w-full min-h-[52px] h-13 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-base shadow-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            className="w-full h-11 rounded-lg bg-stone-900 hover:bg-black text-white font-semibold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
-            <span>✓ सेव करें (Save & Continue)</span>
-            <ArrowRight className="w-5 h-5" />
+            <span>Save & Continue (सेव करें)</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </form>
     </div>
   );
 };
+

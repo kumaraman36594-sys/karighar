@@ -5,9 +5,11 @@ import { VoiceRecognizer, isSttSupported, speak } from '../../utils/speech';
 
 interface VoiceInputButtonProps {
   language?: Language;
-  onResult: (text: string) => void;
+  onResult?: (text: string) => void;
+  onTranscript?: (text: string) => void;
   currentValue?: string;
   placeholderTitle?: string;
+  promptText?: string;
   presets?: string[];
   size?: 'sm' | 'md' | 'lg';
   className?: string;
@@ -17,13 +19,19 @@ interface VoiceInputButtonProps {
 export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
   language = 'hi',
   onResult,
+  onTranscript,
   currentValue = '',
   placeholderTitle = 'बोलकर लिखें',
+  promptText,
   presets = [],
   size = 'md',
   className = '',
   id,
 }) => {
+  const handleResultCallback = (text: string) => {
+    if (onTranscript) onTranscript(text);
+    if (onResult) onResult(text);
+  };
   const [isListening, setIsListening] = useState<boolean>(false);
   const [showPresetsMenu, setShowPresetsMenu] = useState<boolean>(false);
   const [interimText, setInterimText] = useState<string>('');
@@ -68,7 +76,7 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
             setIsListening(false);
             setInterimText('');
             if (transcript && transcript.trim()) {
-              onResult(transcript.trim());
+              handleResultCallback(transcript.trim());
               speak(`दर्ज किया: ${transcript.trim()}`, language as Language);
             }
           }
@@ -148,7 +156,7 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
                 key={idx}
                 type="button"
                 onClick={() => {
-                  onResult(preset);
+                  handleResultCallback(preset);
                   setShowPresetsMenu(false);
                   speak(preset, language as Language);
                 }}

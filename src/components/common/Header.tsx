@@ -3,15 +3,19 @@ import {
   Languages, 
   Volume2, 
   VolumeX, 
-  Store, 
+  Smartphone, 
+  Tablet, 
+  Laptop, 
+  Sparkles,
+  Users,
+  Store,
   ShoppingBag,
-  Palette,
-  Users
+  Layers
 } from 'lucide-react';
 import { Language, UserRole, Artist } from '../../types';
 import { LANGUAGE_NAMES, stopSpeech } from '../../utils/speech';
 import { TokenBadge } from './TokenBadge';
-import { useLanguage } from '../../context/LanguageContext';
+import { KarigharWordmark } from './KarigharWordmark';
 
 interface HeaderProps {
   currentRole?: UserRole;
@@ -20,7 +24,7 @@ interface HeaderProps {
   language?: Language;
   activeArtist?: Artist;
   tokenBalance?: number;
-  deviceMode?: 'auto' | 'phone' | 'tablet' | 'laptop';
+  deviceMode: 'auto' | 'phone' | 'tablet' | 'laptop';
   isAudioMuted: boolean;
   onLanguageChange?: (lang: Language) => void;
   onChangeLanguage?: (lang: Language) => void;
@@ -36,64 +40,57 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = (props) => {
-  const { language: ctxLang, setLanguage } = useLanguage();
   const currentRole = props.currentRole || props.role || 'seller';
-  const currentLanguage = props.currentLanguage || props.language || ctxLang || 'hi';
+  const currentLanguage = props.currentLanguage || props.language || 'hi';
   const activeArtist = props.activeArtist;
   const tokenBalance = props.tokenBalance ?? 245;
+  const deviceMode = props.deviceMode;
   const isAudioMuted = props.isAudioMuted;
 
-  const handleLanguageChange = (lang: Language) => {
-    setLanguage(lang);
+  const onLanguageChange = (lang: Language) => {
     if (props.onLanguageChange) props.onLanguageChange(lang);
     if (props.onChangeLanguage) props.onChangeLanguage(lang);
   };
 
-  const handleRoleChange = (role: UserRole) => {
+  const onRoleChange = (role: UserRole) => {
     if (props.onRoleChange) props.onRoleChange(role);
     if (props.onSwitchRole) props.onSwitchRole(role);
   };
 
-  const handleToggleAudio = () => {
+  const onDeviceModeChange = (mode: 'auto' | 'phone' | 'laptop' | 'tablet') => {
+    if (props.onDeviceModeChange) props.onDeviceModeChange(mode);
+    if (props.onChangeDeviceMode) props.onChangeDeviceMode(mode);
+  };
+
+  const onToggleAudioMute = () => {
     if (!isAudioMuted) stopSpeech();
     if (props.onToggleAudioMute) props.onToggleAudioMute();
     if (props.onToggleAudio) props.onToggleAudio();
   };
 
-  const handleOpenArtistSwitcher = () => {
+  const onOpenArtistSwitcher = () => {
     if (props.onOpenArtistSwitcher) props.onOpenArtistSwitcher();
     if (props.onSwitchArtist) props.onSwitchArtist();
   };
 
+  const onOpenTokens = props.onOpenTokens;
   return (
-    <header className="bg-white border-b border-stone-200 sticky top-0 z-40 px-2.5 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-2.5 shadow-xs">
-      <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3">
+    <header className="bg-white/95 backdrop-blur-md border-b border-stone-200 sticky top-0 z-40 px-3 sm:px-6 py-2.5 shadow-xs">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand */}
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-[#B4431E] flex items-center justify-center text-white shadow-xs shrink-0">
-            <Palette className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-stone-900 text-sm sm:text-base md:text-lg leading-tight tracking-tight truncate">
-                कारीगर
-              </span>
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold px-1.5 sm:px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-200 tracking-wide hidden xs:inline-block">
-                Artisan
-              </span>
-            </div>
-            <p className="text-[11px] text-stone-500 font-medium truncate hidden md:block">
-              "हुनर से बाज़ार तक" — From skill to marketplace
-            </p>
-          </div>
+        <div className="flex items-center gap-2.5 min-w-0">
+          <KarigharWordmark size="sm" align="left" />
+          <span className="hidden sm:inline-block text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md bg-stone-100 border border-stone-200 text-stone-700 tracking-wider">
+            Heritage Crafts
+          </span>
         </div>
 
-        {/* Center: Active Artist (for Seller) */}
+        {/* Center: Active Artist (for Seller) or Quick Switch */}
         {currentRole === 'seller' && activeArtist && (
           <button
-            type="button"
-            onClick={handleOpenArtistSwitcher}
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition-colors text-left cursor-pointer min-h-[44px]"
+            onClick={onOpenArtistSwitcher}
+            id="header-artist-switch-btn"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition-colors text-left"
             title="Switch or register artists"
           >
             <div className="w-7 h-7 rounded-full overflow-hidden border border-stone-300 shrink-0">
@@ -107,7 +104,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
             <div className="text-xs">
               <div className="font-semibold text-stone-900 flex items-center gap-1">
                 <span>{activeArtist.name}</span>
-                <span className="text-[10px] text-[#B4431E] bg-amber-50 border border-amber-200 px-1 rounded">Active</span>
+                <span className="text-[10px] text-stone-600 bg-white border border-stone-200 px-1 rounded">Active</span>
               </div>
               <div className="text-stone-500 text-[11px] truncate max-w-[120px]">
                 {activeArtist.craft} · {activeArtist.village}
@@ -116,75 +113,150 @@ export const Header: React.FC<HeaderProps> = (props) => {
           </button>
         )}
 
-        {/* Controls: Audio, Language, Tokens, Role Switch */}
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+        {/* Controls: Device preview switch, Audio, Language, Role */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Device viewport simulator pills */}
+          <div className="hidden lg:flex items-center p-0.5 rounded-lg bg-stone-100 border border-stone-200 text-stone-600 text-xs">
+            <button
+              type="button"
+              onClick={() => {
+                console.log('Button clicked:', 'device-mode-phone');
+                onDeviceModeChange('phone');
+              }}
+              className={`p-1.5 rounded-md transition-all flex items-center gap-1 cursor-pointer ${
+                deviceMode === 'phone' ? 'bg-white shadow-xs text-stone-900 font-bold' : 'hover:text-stone-900'
+              }`}
+              title="Phone layout (<600px)"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span className="text-[11px]">Phone</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                console.log('Button clicked:', 'device-mode-tablet');
+                onDeviceModeChange('tablet');
+              }}
+              className={`p-1.5 rounded-md transition-all flex items-center gap-1 cursor-pointer ${
+                deviceMode === 'tablet' ? 'bg-white shadow-xs text-stone-900 font-bold' : 'hover:text-stone-900'
+              }`}
+              title="Tablet layout (600-900px)"
+            >
+              <Tablet className="w-3.5 h-3.5" />
+              <span className="text-[11px]">Tablet</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                console.log('Button clicked:', 'device-mode-laptop');
+                onDeviceModeChange('laptop');
+              }}
+              className={`p-1.5 rounded-md transition-all flex items-center gap-1 cursor-pointer ${
+                deviceMode === 'laptop' ? 'bg-white shadow-xs text-stone-900 font-bold' : 'hover:text-stone-900'
+              }`}
+              title="Laptop layout (>900px)"
+            >
+              <Laptop className="w-3.5 h-3.5" />
+              <span className="text-[11px]">Laptop</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                console.log('Button clicked:', 'device-mode-auto');
+                onDeviceModeChange('auto');
+              }}
+              className={`p-1.5 rounded-md transition-all text-[11px] cursor-pointer ${
+                deviceMode === 'auto' ? 'bg-white shadow-xs text-stone-900 font-bold' : 'hover:text-stone-900'
+              }`}
+              title="Fluid responsive to browser width"
+            >
+              Auto
+            </button>
+          </div>
+
           {/* Audio TTS toggle */}
           <button
             type="button"
-            onClick={handleToggleAudio}
+            onClick={() => {
+              console.log('Button clicked:', 'audio-mute-toggle');
+              if (!isAudioMuted) stopSpeech();
+              onToggleAudioMute();
+            }}
             id="audio-mute-toggle"
-            className={`min-w-[38px] sm:min-w-[44px] min-h-[38px] sm:min-h-[44px] p-2 sm:p-2.5 rounded-lg border transition-colors flex items-center justify-center cursor-pointer ${
+            className={`p-2 rounded-lg border transition-colors cursor-pointer ${
               isAudioMuted 
-                ? 'bg-amber-50 border-amber-200 text-amber-800' 
-                : 'bg-stone-50 border-stone-200 text-stone-800 hover:bg-stone-100'
+                ? 'bg-stone-100 border-stone-200 text-stone-500 hover:bg-stone-200' 
+                : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
             }`}
             title={isAudioMuted ? 'Voice assistance muted' : 'Voice assistance active (TTS)'}
           >
-            {isAudioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-[#B4431E]" />}
+            {isAudioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
 
           {/* Language Selector */}
           <div className="relative inline-block">
             <select
               value={currentLanguage}
-              onChange={(e) => handleLanguageChange(e.target.value as Language)}
+              onChange={(e) => {
+                console.log('Language changed to:', e.target.value);
+                onLanguageChange(e.target.value as Language);
+              }}
               id="language-selector"
-              className="bg-stone-50 hover:bg-stone-100 text-stone-800 text-xs font-semibold min-h-[38px] sm:min-h-[44px] py-1.5 sm:py-2 pl-2 sm:pl-3 pr-6 sm:pr-8 border border-stone-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#B4431E] transition-colors max-w-[66px] sm:max-w-none truncate"
+              className="bg-stone-50 hover:bg-stone-100 text-stone-800 text-xs font-semibold py-1.5 pl-2.5 pr-7 border border-stone-200 rounded-lg appearance-none cursor-pointer focus:outline-hidden focus:border-stone-400 transition-colors"
             >
-              <option value="hi">हिन्दी</option>
-              <option value="en">English</option>
-              <option value="ta">தமிழ்</option>
-              <option value="te">తెలుగు</option>
-              <option value="bn">বাংলা</option>
-              <option value="mr">मराठी</option>
-              <option value="gu">ગુજરાતી</option>
-              <option value="kn">ಕನ್ನಡ</option>
+              <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+              <option value="en">🇮🇳 English</option>
+              <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
+              <option value="te">🇮🇳 తెలుగు (Telugu)</option>
+              <option value="bn">🇮🇳 বাংলা (Bengali)</option>
+              <option value="mr">🇮🇳 मराठी (Marathi)</option>
+              <option value="gu">🇮🇳 ગુજરાતી (Gujarati)</option>
+              <option value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+              <option value="mai">🇮🇳 मैथिली (Maithili)</option>
+              <option value="bho">🇮🇳 भोजपुरी (Bhojpuri)</option>
+              <option value="or">🇮🇳 ଓଡ଼ିଆ (Odia)</option>
+              <option value="pa">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 sm:px-2 text-stone-500">
-              <Languages className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-500">
+              <Languages className="w-3.5 h-3.5" />
             </div>
           </div>
 
           {/* Token Badge */}
           <TokenBadge 
             tokens={tokenBalance} 
-            onClick={props.onOpenTokens} 
-            size="sm"
-            className="sm:hidden"
-          />
-          <TokenBadge 
-            tokens={tokenBalance} 
-            onClick={props.onOpenTokens} 
+            onClick={() => {
+              console.log('Button clicked:', 'header-tokens-badge');
+              if (onOpenTokens) onOpenTokens();
+            }} 
             size="md"
-            className="hidden sm:inline-flex"
           />
 
           {/* Quick Role Toggle (Seller ⇄ Buyer) */}
           <button
             type="button"
-            onClick={() => handleRoleChange(currentRole === 'seller' ? 'buyer' : 'seller')}
+            onClick={() => {
+              console.log('Button clicked:', 'header-role-toggle');
+              onRoleChange(currentRole === 'seller' ? 'buyer' : 'seller');
+            }}
             id="role-toggle-btn"
-            className="min-h-[38px] sm:min-h-[44px] flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer bg-[#B4431E] hover:bg-[#9E3514] text-white shrink-0"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all shadow-xs cursor-pointer ${
+              currentRole === 'seller'
+                ? 'bg-stone-900 hover:bg-black text-white border-stone-900'
+                : 'bg-emerald-700 hover:bg-emerald-800 text-white border-emerald-700'
+            }`}
           >
             {currentRole === 'seller' ? (
               <>
-                <ShoppingBag className="w-4 h-4" />
-                <span className="hidden md:inline">Buyer Store</span>
+                <Store className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline">Seller Mode</span>
+                <span className="sm:hidden">Seller</span>
               </>
             ) : (
               <>
-                <Store className="w-4 h-4" />
-                <span className="hidden md:inline">Seller Mode</span>
+                <ShoppingBag className="w-3.5 h-3.5 text-white" />
+                <span className="hidden sm:inline">Buyer Mode</span>
+                <span className="sm:hidden">Buyer</span>
               </>
             )}
           </button>

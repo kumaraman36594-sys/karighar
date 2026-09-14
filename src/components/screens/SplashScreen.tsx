@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { Sparkles, ArrowRight, Palette } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Language } from '../../types';
 import { TRANSLATIONS } from '../../utils/translations';
 import { speak } from '../../utils/speech';
+import { KarigharEmblem } from '../common/KarigharEmblem';
+import { KarigharWordmark } from '../common/KarigharWordmark';
 
 interface SplashScreenProps {
   language: Language;
@@ -31,38 +33,35 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   return (
     <div 
       onClick={onFinish}
-      className="min-h-screen bg-gradient-to-br from-[#B4431E] via-[#9C3818] to-[#78280E] flex flex-col items-center justify-center p-6 text-white text-center cursor-pointer select-none relative overflow-hidden"
+      className="min-h-screen bg-stone-900 flex flex-col items-center justify-center p-6 text-white text-center cursor-pointer select-none relative"
     >
-      {/* Background Decorative Rings */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-stone-900/20 blur-3xl pointer-events-none" />
-
       <div className="relative z-10 max-w-sm flex flex-col items-center animate-fade-in">
-        {/* App Logo Emblem */}
-        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-[#FDFBF7] text-[#B4431E] shadow-2xl border-2 border-amber-300/40 flex items-center justify-center mb-6 transform hover:scale-105 transition-transform">
-          <Palette className="w-12 h-12 sm:w-14 sm:h-14 text-[#B4431E]" />
+        {/* App Logo / Artisan Emblem */}
+        <div className="mb-6 p-2 rounded-full bg-stone-800/80 border border-stone-700 shadow-lg">
+          <KarigharEmblem size={130} />
         </div>
 
-        {/* Title */}
-        <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-2 text-white drop-shadow-sm font-serif">
-          {t.appName}
-        </h1>
-        <p className="text-amber-100/90 font-medium text-lg sm:text-xl mb-6">
-          "{t.tagline}"
+        {/* Wordmark */}
+        <div className="p-3 rounded-xl bg-white/95 shadow-md mb-3">
+          <KarigharWordmark size="md" align="center" />
+        </div>
+
+        <p className="text-amber-200 font-medium text-sm mb-4">
+          "हुनर से बाज़ार तक" — A Home for Artisans
         </p>
 
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/20 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/90 mb-8">
-          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-          <span>हाथ का हुनर · सीधा बाज़ार</span>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-stone-800 border border-stone-700 text-xs font-semibold text-stone-300 mb-8">
+          <span>Rural Indian Artisan Commerce</span>
         </div>
 
         {/* Quick tap indicator */}
-        <div className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white transition-colors">
-          <span>आगे बढ़ने के लिए कहीं भी टैप करें</span>
+        <div className="flex items-center gap-1.5 text-xs text-stone-400 hover:text-stone-200 transition-colors">
+          <span>आगे बढ़ने के लिए टैप करें</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </div>
       </div>
     </div>
   );
 };
+

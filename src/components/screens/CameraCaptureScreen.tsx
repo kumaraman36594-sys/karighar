@@ -5,7 +5,6 @@ import {
   Volume2, 
   RefreshCw, 
   Check, 
-  CheckCircle2,
   UploadCloud, 
   Sparkles,
   AlertCircle,
@@ -243,16 +242,16 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
             className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-radial from-stone-900 to-black p-6">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-radial from-gray-900 to-black p-6">
             <img
               src={currentStep < 3 ? guidanceSteps[currentStep].sampleUrl : capturedPhotos[0]}
               alt="Guidance Preview"
-              className="w-full max-w-sm h-72 object-cover rounded-xl opacity-80 shadow-2xl border border-white/20"
+              className="w-full max-w-sm h-72 object-cover rounded-2xl opacity-75 shadow-2xl border border-white/20"
               referrerPolicy="no-referrer"
             />
             <div className="mt-3 text-center">
-              <span className="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full border border-amber-500/30">
-                Guided Artisan Camera Simulation
+              <span className="text-xs bg-indigo-500/30 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/40">
+                ✨ Guided Artisan Camera Simulation
               </span>
             </div>
           </div>
@@ -265,15 +264,15 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
 
         {/* Center Frame Guide Overlay (if not finished) */}
         {currentStep < 3 && (
-          <div className="relative z-10 w-[min(280px,85vw)] aspect-3/4 sm:w-84 sm:aspect-auto sm:h-96 border-2 border-dashed border-amber-400/80 rounded-2xl flex flex-col items-center justify-between p-3 sm:p-4 shadow-2xl pointer-events-none">
+          <div className="relative z-10 w-72 h-80 sm:w-84 sm:h-96 border-2 border-dashed border-amber-400/80 rounded-3xl flex flex-col items-center justify-between p-4 shadow-2xl pointer-events-none">
             {/* Corner Markers */}
-            <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-amber-400 rounded-tl-lg" />
-            <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-amber-400 rounded-tr-lg" />
-            <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-amber-400 rounded-bl-lg" />
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-amber-400 rounded-br-lg" />
+            <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-amber-400 rounded-tl-xl" />
+            <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-amber-400 rounded-tr-xl" />
+            <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-amber-400 rounded-bl-xl" />
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-amber-400 rounded-br-xl" />
 
             {/* AI Guidance Badge Top */}
-            <div className="bg-black/75 backdrop-blur-md px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border border-amber-400/40 text-[11px] sm:text-xs font-bold text-amber-300 shadow-md">
+            <div className="bg-black/75 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-amber-400/40 text-xs font-bold text-amber-300 shadow-md">
               AI Guide: Step {currentStep + 1}
             </div>
 
@@ -283,7 +282,7 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
             </div>
 
             {/* AI Guidance Banner Bottom */}
-            <div className="bg-black/80 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-white/20 text-center max-w-[260px]">
+            <div className="bg-black/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 text-center max-w-[260px]">
               <p className="text-xs sm:text-sm font-bold text-white leading-tight">
                 {guidanceSteps[currentStep].guidance}
               </p>
@@ -293,33 +292,30 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
 
         {/* Finished State: 3 Photos Strip */}
         {currentStep >= 3 && (
-          <div className="relative z-10 p-4 sm:p-5 max-w-md w-[calc(100%-24px)] bg-stone-950/90 backdrop-blur-xl rounded-xl border border-stone-700 text-center mx-auto">
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <h3 className="text-base font-bold text-white">
-                3 Angles Captured
-              </h3>
-            </div>
-            <p className="text-xs text-stone-300 mb-3 sm:mb-4">
-              Front, 45° angle, and top view ready for listing.
+          <div className="relative z-10 p-4 max-w-md w-full bg-stone-900/90 backdrop-blur-md rounded-xl border border-stone-700 text-center mx-4">
+            <h3 className="text-sm font-bold text-white mb-0.5 flex items-center justify-center gap-1.5">
+              <Check className="w-4 h-4 text-emerald-400" />
+              <span>3 Angles Captured</span>
+            </h3>
+            <p className="text-xs text-stone-300 mb-3">
+              Front, 45° angle, and top view ready for cataloging.
             </p>
 
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-4">
+            <div className="grid grid-cols-3 gap-2 mb-3">
               {capturedPhotos.map((url, idx) => (
-                <div key={idx} className="relative group rounded-lg overflow-hidden border border-white/30 h-24 sm:h-28 bg-stone-900">
+                <div key={idx} className="relative group rounded-lg overflow-hidden border border-stone-600 h-24 bg-stone-950">
                   <img
                     src={url}
                     alt={`Photo ${idx + 1}`}
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
-                  <span className="absolute bottom-1 left-1 text-[10px] font-bold bg-black/70 px-1.5 py-0.5 rounded text-white">
+                  <span className="absolute bottom-1 left-1 text-[10px] font-semibold bg-stone-900/80 px-1.5 py-0.5 rounded text-white">
                     {idx === 0 ? 'Front' : idx === 1 ? '45°' : 'Top'}
                   </span>
                   <button
-                    type="button"
                     onClick={() => handleRetake(idx)}
-                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-red-600 transition-colors cursor-pointer"
+                    className="absolute top-1 right-1 w-6 h-6 rounded bg-stone-900/80 text-stone-200 hover:text-white flex items-center justify-center hover:bg-stone-800 transition-colors cursor-pointer"
                     title="Retake this photo"
                   >
                     <RefreshCw className="w-3 h-3" />
@@ -328,22 +324,20 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
               ))}
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <button
-                type="button"
                 onClick={handleConfirmUsePhotos}
                 id="camera-use-photos-btn"
-                className="w-full min-h-[52px] h-13 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-base shadow-md flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="w-full h-11 rounded-lg bg-stone-100 hover:bg-white text-stone-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
-                <Check className="w-5 h-5" />
+                <Check className="w-4 h-4" />
                 <span>{t.useThesePhotos}</span>
               </button>
               <button
-                type="button"
                 onClick={() => handleRetake()}
-                className="min-h-[44px] text-sm text-stone-300 hover:text-white py-2 cursor-pointer flex items-center justify-center gap-1.5 font-bold"
+                className="h-9 text-xs text-stone-300 hover:text-white cursor-pointer flex items-center justify-center gap-1.5 font-medium"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="w-3.5 h-3.5" />
                 <span>{t.retake}</span>
               </button>
             </div>
@@ -352,46 +346,43 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
       </div>
 
       {/* Bottom Controls Overlay */}
-      <div className="relative z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4 sm:p-6">
+      <div className="relative z-20 bg-stone-950/80 p-4 sm:p-5 border-t border-stone-900">
         {currentStep < 3 ? (
           <div className="max-w-md mx-auto flex items-center justify-between gap-4">
             {/* Manual file picker fallback */}
             <button
-              type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex flex-col items-center justify-center text-stone-300 hover:text-white text-xs gap-1 min-w-[50px] min-h-[44px] cursor-pointer"
+              className="flex flex-col items-center justify-center text-stone-400 hover:text-white text-xs gap-1 min-w-[50px] cursor-pointer"
               title="Upload existing photos"
             >
               <UploadCloud className="w-5 h-5" />
               <span>Gallery</span>
             </button>
 
-            {/* Big Shutter Capture Button */}
-            <div className="flex flex-col items-center gap-1.5">
+            {/* Shutter Capture Button */}
+            <div className="flex flex-col items-center gap-1">
               <button
-                type="button"
                 onClick={handleCapture}
                 disabled={isProcessingShutter}
                 id="camera-shutter-btn"
-                className="w-20 h-20 sm:w-22 sm:h-22 rounded-full border-4 border-white bg-white/20 hover:bg-white/30 backdrop-blur-md flex items-center justify-center shadow-2xl active:scale-95 transition-all cursor-pointer group"
+                className="w-16 h-16 rounded-full border-2 border-white/80 bg-stone-900 flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer group"
               >
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#B4431E] group-hover:bg-[#963717] flex items-center justify-center text-white shadow-inner transition-colors">
-                  <Camera className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-full bg-white group-hover:bg-stone-200 flex items-center justify-center text-stone-900">
+                  <Camera className="w-5 h-5" />
                 </div>
               </button>
-              <span className="text-xs font-bold text-white tracking-wide">
+              <span className="text-[11px] font-medium text-stone-300 tracking-wide">
                 {t.captureButton}
               </span>
             </div>
 
             {/* Skip guidance link */}
             <button
-              type="button"
               onClick={() => {
                 setCapturedPhotos(SAMPLE_CAPTURE_PREVIEWS.map(s => s.url));
                 setCurrentStep(3);
               }}
-              className="flex flex-col items-center justify-center text-stone-300 hover:text-white text-xs gap-1 min-w-[50px] min-h-[44px] cursor-pointer"
+              className="flex flex-col items-center justify-center text-stone-400 hover:text-white text-xs gap-1 min-w-[50px] cursor-pointer"
             >
               <Sparkles className="w-5 h-5 text-amber-400" />
               <span>Auto 3</span>
@@ -399,7 +390,7 @@ export const CameraCaptureScreen: React.FC<CameraCaptureScreenProps> = ({
           </div>
         ) : (
           <div className="text-center text-xs text-stone-400">
-            Tap "Use These Photos" to begin AI processing
+            Select "Use These Photos" to begin AI processing
           </div>
         )}
       </div>

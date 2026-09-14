@@ -2,21 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ShieldCheck, Loader2, ArrowRight, Smartphone } from 'lucide-react';
 import { Language } from '../../types';
 import { getTranslation } from '../../utils/translations';
-import { speak, stopSpeech } from '../../utils/speech';
+import { speak, stopSpeech } from '../../services/voiceService';
 import { AudioSpeakerButton } from '../common/AudioSpeakerButton';
 
 interface SellerLoginScreenProps {
   language: Language;
   onBack: () => void;
   onSendOtp: (mobile: string) => void;
-  isAudioMuted: boolean;
+  isAudioMuted?: boolean;
 }
 
 export const SellerLoginScreen: React.FC<SellerLoginScreenProps> = ({
   language,
   onBack,
   onSendOtp,
-  isAudioMuted,
+  isAudioMuted = false,
 }) => {
   const t = getTranslation(language);
   const [mobileNumber, setMobileNumber] = useState('9876543210');
@@ -26,7 +26,7 @@ export const SellerLoginScreen: React.FC<SellerLoginScreenProps> = ({
   useEffect(() => {
     if (!isAudioMuted) {
       const timer = setTimeout(() => {
-        speak('अपना मोबाइल नंबर डालें।', language);
+        speak('अपना मोबाइल नंबर डालें। Enter your mobile number.', language);
       }, 350);
       return () => {
         clearTimeout(timer);
@@ -54,20 +54,23 @@ export const SellerLoginScreen: React.FC<SellerLoginScreenProps> = ({
   };
 
   const handleKeypadPress = (digit: string) => {
+    console.log('Button clicked:', `keypad-${digit}`);
     playClickFeedback();
     if (mobileNumber.length < 10) {
-      setMobileNumber(prev => prev + digit);
+      setMobileNumber((prev) => prev + digit);
       setError('');
     }
   };
 
   const handleBackspace = () => {
+    console.log('Button clicked:', 'keypad-backspace');
     playClickFeedback();
-    setMobileNumber(prev => prev.slice(0, -1));
+    setMobileNumber((prev) => prev.slice(0, -1));
   };
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    console.log('Button clicked:', 'send-otp-btn');
     if (mobileNumber.length !== 10) {
       setError('कृपया 10 अंकों का मोबाइल नंबर डालें (Please enter 10 digits)');
       if (!isAudioMuted) {
@@ -88,38 +91,39 @@ export const SellerLoginScreen: React.FC<SellerLoginScreenProps> = ({
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-[#FDFBF7] flex flex-col justify-between p-3 sm:p-6 max-w-md w-full mx-auto">
-      {/* Top Header with Back */}
+    <div className="min-h-screen bg-white flex flex-col justify-between p-4 sm:p-6 max-w-md mx-auto font-sans">
+      {/* Top Header with Back Button */}
       <div>
-        <div className="flex items-center justify-between gap-3 mb-4 sm:mb-5">
+        <div className="flex items-center justify-between gap-3 mb-4">
           <button
             type="button"
-            onClick={onBack}
+            onClick={() => {
+              console.log('Button clicked:', 'seller-login-back');
+              onBack();
+            }}
             id="seller-login-back-btn"
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-700 hover:bg-stone-50 transition-colors shadow-xs cursor-pointer"
+            className="min-h-[44px] min-w-[44px] rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] flex items-center justify-center text-[#111827] hover:bg-stone-100 transition-colors shadow-xs cursor-pointer"
             title="Back / पीछे जाएं"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div className="px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-bold text-amber-900">
+          <div className="px-3 py-1 rounded-full bg-[#F3F4F6] text-xs font-semibold text-[#4B5563]">
             कदम 1 / 2 (Step 1 of 2)
           </div>
         </div>
 
         {/* Title with Audio Speaker */}
-        <div className="mb-4 sm:mb-5 flex items-start justify-between gap-2.5 sm:gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-stone-200 shadow-xs">
-          <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-[#B4431E] shrink-0 mt-0.5">
-              <Smartphone className="w-5 h-5" />
+        <div className="mb-4 flex items-start justify-between gap-3 bg-[#F9FAFB] p-4 rounded-lg border border-[#E5E7EB]">
+          <div>
+            <div className="w-8 h-8 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center text-[#FF6B35] mb-2">
+              <Smartphone className="w-4 h-4" />
             </div>
-            <div className="min-w-0">
-              <h1 className="text-lg sm:text-2xl font-extrabold text-stone-900 leading-tight">
-                {t.loginTitle}
-              </h1>
-              <p className="text-[11px] sm:text-xs text-stone-600 mt-0.5 sm:mt-1">
-                {t.loginSubtitle}
-              </p>
-            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] leading-tight">
+              {t.loginTitle || 'मोबाइल नंबर दर्ज करें'}
+            </h1>
+            <p className="text-xs sm:text-sm text-[#6B7280] mt-0.5">
+              {t.loginSubtitle || 'सत्यापन के लिए OTP भेजा जाएगा'}
+            </p>
           </div>
           <AudioSpeakerButton
             text="अपना 10 अंकों का मोबाइल नंबर डालें। हम आपको OTP भेजेंगे।"
@@ -128,20 +132,20 @@ export const SellerLoginScreen: React.FC<SellerLoginScreenProps> = ({
             variant="primary"
             title="शीर्षक सुनें"
             id="login-hear-title-btn"
-            className="shrink-0"
+            className="min-h-[44px] min-w-[44px] bg-[#FF6B35] text-white hover:bg-[#E05A2B] rounded-lg cursor-pointer shrink-0"
           />
         </div>
 
-        {/* Input Field */}
-        <div className="bg-white rounded-xl p-3.5 sm:p-5 border border-stone-200 shadow-xs mb-3 sm:mb-4">
-          <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">
+        {/* Large Input Field */}
+        <div className="bg-white rounded-lg p-4 border border-[#E5E7EB] shadow-xs mb-3">
+          <label className="block text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-1.5">
             मोबाइल नंबर (Mobile Number)
           </label>
-          <div className="flex items-center gap-2 sm:gap-3 border-2 border-stone-300 focus-within:border-[#B4431E] rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 bg-stone-50/50 h-13 sm:h-14 transition-colors">
-            <span className="text-base sm:text-lg font-extrabold text-stone-900 flex items-center gap-1 shrink-0">
-              🇮🇳 +91
+          <div className="flex items-center gap-2.5 border border-[#D1D5DB] focus-within:border-[#FF6B35] rounded-lg px-3 py-2 bg-[#F9FAFB] min-h-[52px] transition-colors">
+            <span className="text-base font-bold text-[#111827] shrink-0">
+              +91
             </span>
-            <span className="text-stone-300 font-light text-lg sm:text-xl">|</span>
+            <span className="text-[#D1D5DB] font-light text-xl">|</span>
             <input
               type="tel"
               maxLength={10}
@@ -151,7 +155,7 @@ export const SellerLoginScreen: React.FC<SellerLoginScreenProps> = ({
                 if (val.length <= 10) setMobileNumber(val);
               }}
               placeholder="00000 00000"
-              className="w-full text-lg sm:text-xl font-extrabold tracking-wider text-stone-900 focus:outline-hidden bg-transparent placeholder:text-stone-300 min-w-0"
+              className="w-full text-xl font-bold tracking-wider text-[#111827] focus:outline-hidden bg-transparent placeholder:text-[#9CA3AF]"
             />
           </div>
           {error && <p className="text-xs text-red-600 mt-2 font-medium">{error}</p>}
@@ -159,25 +163,30 @@ export const SellerLoginScreen: React.FC<SellerLoginScreenProps> = ({
           {/* Quick autofill demo button */}
           <button
             type="button"
-            onClick={() => setMobileNumber('9876543210')}
-            className="mt-3 w-full min-h-[40px] p-2.5 rounded-lg bg-amber-50 hover:bg-amber-100/80 border border-amber-200 flex items-center justify-between text-xs text-amber-900 transition-colors cursor-pointer text-left"
+            onClick={() => {
+              console.log('Button clicked:', 'autofill-demo-mobile');
+              setMobileNumber('9876543210');
+            }}
+            id="btn-autofill-mobile"
+            className="mt-2.5 w-full min-h-[44px] p-2.5 rounded-lg bg-[#F9FAFB] hover:bg-orange-50/50 border border-[#E5E7EB] hover:border-[#FF6B35] flex items-center justify-between text-xs text-[#374151] transition-colors cursor-pointer text-left"
           >
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#B4431E] shrink-0" />
-              <span className="font-semibold">{t.demoHint}</span>
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-[#FF6B35] shrink-0" />
+              <span>{t.demoHint || 'डेमो के लिए OTP 123456 इस्तेमाल करें'}</span>
             </div>
-            <span className="font-bold text-xs text-[#B4431E] hover:underline shrink-0">ऑटो-भरें</span>
+            <span className="font-semibold text-xs shrink-0 text-[#FF6B35]">ऑटो-भरें</span>
           </button>
         </div>
 
-        {/* Tactile Big Numeric Keypad */}
-        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 my-2 sm:my-3">
+        {/* Tactile Keypad */}
+        <div className="grid grid-cols-3 gap-2 my-3">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (
             <button
               key={digit}
               type="button"
               onClick={() => handleKeypadPress(digit)}
-              className="min-h-[48px] h-12 rounded-xl bg-white hover:bg-amber-50/50 active:bg-amber-100/60 border border-stone-200 text-lg sm:text-xl font-bold text-stone-800 shadow-xs flex items-center justify-center transition-all cursor-pointer select-none active:scale-95"
+              id={`keypad-digit-${digit}`}
+              className="min-h-[50px] rounded-lg bg-white hover:bg-orange-50/40 active:bg-orange-100 border border-[#E5E7EB] hover:border-[#FF6B35] text-xl font-bold text-[#111827] shadow-xs flex items-center justify-center transition-colors cursor-pointer select-none"
             >
               {digit}
             </button>
@@ -185,48 +194,52 @@ export const SellerLoginScreen: React.FC<SellerLoginScreenProps> = ({
           <button
             type="button"
             onClick={() => {
+              console.log('Button clicked:', 'keypad-clear');
               playClickFeedback();
               setMobileNumber('');
             }}
-            className="min-h-[48px] h-12 rounded-xl bg-stone-100 hover:bg-stone-200 active:bg-stone-300 border border-stone-200 text-[11px] sm:text-xs font-bold text-stone-600 shadow-xs flex items-center justify-center transition-all cursor-pointer select-none"
+            id="keypad-clear-btn"
+            className="min-h-[50px] rounded-lg bg-[#F9FAFB] hover:bg-stone-200 border border-[#E5E7EB] text-xs font-semibold text-[#4B5563] shadow-xs flex items-center justify-center transition-colors cursor-pointer select-none"
           >
-            हटाएं
+            हटाएं (Clear)
           </button>
           <button
             type="button"
             onClick={() => handleKeypadPress('0')}
-            className="min-h-[48px] h-12 rounded-xl bg-white hover:bg-amber-50/50 active:bg-amber-100/60 border border-stone-200 text-lg sm:text-xl font-bold text-stone-800 shadow-xs flex items-center justify-center transition-all cursor-pointer select-none active:scale-95"
+            id="keypad-digit-0"
+            className="min-h-[50px] rounded-lg bg-white hover:bg-orange-50/40 active:bg-orange-100 border border-[#E5E7EB] hover:border-[#FF6B35] text-xl font-bold text-[#111827] shadow-xs flex items-center justify-center transition-colors cursor-pointer select-none"
           >
             0
           </button>
           <button
             type="button"
             onClick={handleBackspace}
-            className="min-h-[48px] h-12 rounded-xl bg-stone-100 hover:bg-stone-200 active:bg-stone-300 border border-stone-200 text-xs sm:text-sm font-bold text-stone-700 shadow-xs flex items-center justify-center transition-all cursor-pointer select-none"
+            id="keypad-del-btn"
+            className="min-h-[50px] rounded-lg bg-[#F9FAFB] hover:bg-stone-200 border border-[#E5E7EB] text-xs font-semibold text-[#4B5563] shadow-xs flex items-center justify-center transition-colors cursor-pointer select-none"
           >
-            ⌫ मिटाएं
+            मिटाएं (Del)
           </button>
         </div>
       </div>
 
-      {/* Full-width Action Button */}
-      <div className="pt-2">
+      {/* Action Button */}
+      <div className="pt-3 pb-2">
         <button
           type="button"
           onClick={() => handleSubmit()}
           disabled={isLoading || mobileNumber.length !== 10}
           id="send-otp-btn"
-          className="w-full min-h-[52px] h-13 rounded-xl bg-[#B4431E] hover:bg-[#963717] disabled:opacity-50 text-white font-extrabold text-base shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]"
+          className="w-full min-h-[50px] rounded-lg bg-[#FF6B35] hover:bg-[#E05A2B] disabled:opacity-40 text-white font-bold text-sm sm:text-base shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
               <span>OTP भेजा जा रहा है...</span>
             </>
           ) : (
             <>
-              <span>{t.sendOtp}</span>
-              <ArrowRight className="w-5 h-5" />
+              <span>{t.sendOtp || 'OTP भेजें'}</span>
+              <ArrowRight className="w-4 h-4" />
             </>
           )}
         </button>

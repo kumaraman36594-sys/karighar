@@ -4,20 +4,25 @@ import {
   Sparkles, 
   TrendingUp, 
   Gift, 
-  CheckCircle2, 
-  Users, 
-  Coins, 
-  History, 
-  Wallet, 
-  Trophy, 
+  ArrowUpRight, 
+  ArrowDownLeft, 
+  Package, 
+  Truck, 
+  Layers,
+  CheckCircle2,
+  Users,
+  Coins,
+  ChevronRight,
   ArrowRight,
-  ArrowDownRight,
-  ArrowUpRight
+  Receipt,
+  CreditCard
 } from 'lucide-react';
 import { TokenTransaction, Language } from '../../types';
 import { TRANSLATIONS } from '../../utils/translations';
 import { TokenService, TOKEN_SPEND_OPTIONS, SpendOption } from '../../utils/tokenService';
+import { TierBadge } from '../common/TierBadge';
 import { TokenSpendModal } from '../common/TokenSpendModal';
+import { speak } from '../../utils/speech';
 import { AudioSpeakerButton } from '../common/AudioSpeakerButton';
 
 interface TokenDashboardScreenProps {
@@ -50,31 +55,31 @@ export const TokenDashboardScreen: React.FC<TokenDashboardScreenProps> = ({
 
   const handleSpend = (option: SpendOption) => {
     onRedeemTokens(option.cost, option.titleHi);
-    setToastMessage(`सफलतापूर्वक भुनाया गया: ${option.titleHi}!`);
+    setToastMessage(`Redeemed: ${option.titleHi}!`);
     setTimeout(() => setToastMessage(''), 3000);
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 space-y-4 sm:space-y-6">
+    <div className="max-w-2xl mx-auto space-y-4 pb-20 p-3 sm:p-5 select-none">
       {/* Toast */}
       {toastMessage && (
         <div className="fixed top-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 animate-fade-in">
-          <div className="bg-emerald-700 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs sm:text-sm font-bold flex items-center gap-2 border border-white/20">
-            <CheckCircle2 className="w-4 h-4" />
+          <div className="bg-stone-900 text-white px-3.5 py-2 rounded-lg shadow-md text-xs font-semibold flex items-center gap-2 border border-stone-700">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             <span>{toastMessage}</span>
           </div>
         </div>
       )}
 
       {/* Screen Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-stone-900 flex items-center gap-2">
-            <Coins className="w-6 h-6 text-[#B4431E]" />
-            <span>आपके टोकन (Your Tokens)</span>
+          <h1 className="text-base sm:text-lg font-bold text-stone-900 flex items-center gap-2">
+            <Coins className="w-4 h-4 text-stone-700" />
+            <span>Your Tokens (टोकन डैशबोर्ड)</span>
           </h1>
-          <p className="text-xs text-stone-500 font-medium mt-0.5">
-            कारीगर प्रोत्साहन एवं विकास रिवॉर्ड प्रोग्राम
+          <p className="text-xs text-stone-500">
+            Artisan incentives and village growth rewards
           </p>
         </div>
 
@@ -82,194 +87,171 @@ export const TokenDashboardScreen: React.FC<TokenDashboardScreenProps> = ({
           <AudioSpeakerButton
             text={`आपके पास कुल ${tokenBalance} टोकन हैं, जिनका नकद मूल्य ₹${tokenBalance} है।`}
             language={language}
-            isMuted={isAudioMuted}
             size="sm"
           />
           {onOpenReferrals && (
             <button
-              type="button"
               onClick={onOpenReferrals}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-[#B4431E] border border-orange-200 text-xs font-bold transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 h-8 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200 text-xs font-semibold transition-colors cursor-pointer"
             >
               <Users className="w-3.5 h-3.5" />
-              <span>रेफरल देखें</span>
+              <span>Referrals</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Responsive Two-Column Grid on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
-        {/* Left Column (5 cols): Main Token Card + Spend Options */}
-        <div className="lg:col-span-5 space-y-4 sm:space-y-6">
-          {/* Main Big Token Card */}
-          <div className="bg-gradient-to-br from-[#963717] via-[#B4431E] to-[#782c0f] rounded-xl p-4 sm:p-7 text-white shadow-md relative overflow-hidden space-y-4 sm:space-y-5">
-            <div className="text-center space-y-1">
-              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 text-xs font-bold text-amber-200 backdrop-blur-xs mb-1 sm:mb-2">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>कारीगर प्रोत्साहन टोकन (Karighar Tokens)</span>
+      {/* Main Token Card */}
+      <div className="bg-stone-900 rounded-xl p-5 text-white border border-stone-800 relative space-y-4 shadow-xs">
+        <div className="text-center space-y-1">
+          <span className="inline-block px-2.5 py-0.5 rounded bg-stone-800 text-[11px] font-medium text-amber-400 border border-stone-700">
+            Karighar Artisan Token
+          </span>
+
+          <div className="text-4xl sm:text-5xl font-bold text-amber-400 tracking-tight">
+            {tokenBalance}
+          </div>
+          <div className="text-xs text-stone-400 uppercase tracking-wider font-semibold">
+            Total Available Balance
+          </div>
+        </div>
+
+        {/* 3 Stats Row: Tier | Referrals | Value */}
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-stone-800 text-center">
+          <div className="bg-stone-950 rounded-lg p-2.5 border border-stone-800">
+            <span className="text-[10px] text-stone-400 font-semibold block uppercase">Tier</span>
+            <span className="text-xs sm:text-sm font-bold text-stone-200 block mt-0.5 truncate">
+              {tierInfo.name}
+            </span>
+          </div>
+
+          <div className="bg-stone-950 rounded-lg p-2.5 border border-stone-800">
+            <span className="text-[10px] text-stone-400 font-semibold block uppercase">Referrals</span>
+            <span className="text-xs sm:text-sm font-bold text-stone-200 block mt-0.5">
+              {referralCount}
+            </span>
+          </div>
+
+          <div className="bg-stone-950 rounded-lg p-2.5 border border-stone-800">
+            <span className="text-[10px] text-stone-400 font-semibold block uppercase">Cash Value</span>
+            <span className="text-xs sm:text-sm font-bold text-amber-400 block mt-0.5">
+              ₹{tokenBalance}
+            </span>
+          </div>
+        </div>
+
+        <p className="text-center text-[11px] text-stone-400 font-medium">
+          1 Token = ₹1 Cash Equivalent • Direct transfer or listing discounts
+        </p>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="bg-white rounded-xl p-4 sm:p-5 border border-stone-200 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold text-sm sm:text-base text-stone-900 flex items-center gap-1.5">
+            <Receipt className="w-4 h-4 text-stone-600" />
+            <span>Recent Activity (हाल की गतिविधि)</span>
+          </h3>
+          <span className="text-xs text-stone-500 font-medium">History</span>
+        </div>
+
+        <div className="space-y-1.5">
+          {transactions.slice(0, 7).map((tx) => (
+            <div
+              key={tx.id}
+              className="flex items-center justify-between p-2.5 rounded-lg bg-stone-50 border border-stone-200"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold shrink-0 ${
+                  tx.type === 'debit' 
+                    ? 'bg-stone-200 text-stone-700' 
+                    : 'bg-stone-200 text-stone-900'
+                }`}>
+                  {tx.type === 'debit' ? (
+                    <ArrowDownLeft className="w-3.5 h-3.5 text-stone-600" />
+                  ) : (
+                    <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600" />
+                  )}
+                </div>
+                <div>
+                  <p className="font-semibold text-xs text-stone-900">
+                    {tx.description}
+                  </p>
+                  <p className="text-[10px] text-stone-400">
+                    {new Date(tx.timestamp).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
 
-              <div className="text-4xl sm:text-6xl font-black text-amber-300 drop-shadow-xs tracking-tight">
-                {tokenBalance}
-              </div>
-              <div className="text-[11px] sm:text-xs font-bold text-amber-100 uppercase tracking-widest">
-                कुल टोकन (Total Tokens)
-              </div>
+              <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                tx.type === 'debit' 
+                  ? 'text-stone-700 bg-stone-200' 
+                  : 'text-stone-900 bg-stone-100 border border-stone-200'
+              }`}>
+                {tx.type === 'debit' ? `-${tx.amount}` : `+${tx.amount}`} tokens
+              </span>
             </div>
+          ))}
+        </div>
+      </div>
 
-            {/* 3 Stats Row */}
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 pt-3 border-t border-white/20 text-center">
-              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-1.5 sm:p-2.5 border border-white/10">
-                <span className="text-[10px] text-amber-100 font-semibold flex items-center justify-center gap-1">
-                  <Trophy className="w-3 h-3" /> टियर
-                </span>
-                <span className="text-xs font-bold text-white flex items-center justify-center gap-1 mt-0.5 truncate">
-                  {tierInfo.name}
-                </span>
-              </div>
-
-              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-1.5 sm:p-2.5 border border-white/10">
-                <span className="text-[10px] text-amber-100 font-semibold flex items-center justify-center gap-1">
-                  <Users className="w-3 h-3" /> रेफरल
-                </span>
-                <span className="text-xs font-bold text-white block mt-0.5">
-                  {referralCount}
-                </span>
-              </div>
-
-              <div className="bg-black/20 backdrop-blur-xs rounded-lg p-1.5 sm:p-2.5 border border-white/10">
-                <span className="text-[10px] text-amber-100 font-semibold flex items-center justify-center gap-1">
-                  <Wallet className="w-3 h-3" /> मूल्य
-                </span>
-                <span className="text-xs font-bold text-amber-300 block mt-0.5">
-                  ₹{tokenBalance}
-                </span>
-              </div>
-            </div>
-
-            <p className="text-center text-[10px] sm:text-[11px] text-amber-100/90 font-medium">
-              ₹1 = 1 टोकन नकद मूल्य • सीधे UPI / बैंक में ट्रांसफर या छूट प्राप्त करें
+      {/* Spend Options */}
+      <div className="bg-white rounded-xl p-4 sm:p-5 border border-stone-200 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-sm sm:text-base text-stone-900">
+              Redemption Options (टोकन इस्तेमाल करें)
+            </h3>
+            <p className="text-xs text-stone-500">
+              Boost listing visibility, improve photos, or request payouts
             </p>
           </div>
-
-          {/* टोकन कैसे इस्तेमाल करें */}
-          <div className="bg-white rounded-xl p-5 border border-stone-200 shadow-xs space-y-4">
-            <div>
-              <h3 className="font-extrabold text-base text-stone-900 flex items-center gap-2">
-                <Gift className="w-4 h-4 text-[#B4431E]" />
-                <span>टोकन कैसे इस्तेमाल करें (Spend Options)</span>
-              </h3>
-              <p className="text-xs text-stone-500 mt-0.5">
-                टोकन से लिस्टिंग दृश्यता बढ़ाएं, फोटो सुधारें या नकद निकालें
-              </p>
-            </div>
-
-            <div className="space-y-2.5">
-              {TOKEN_SPEND_OPTIONS.map((item) => {
-                const canAfford = tokenBalance >= item.cost;
-
-                return (
-                  <div
-                    key={item.id}
-                    className="p-3 rounded-lg border border-stone-200 hover:border-amber-300 transition-colors flex items-center justify-between gap-3 bg-stone-50/40"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-9 h-9 rounded-lg bg-orange-50 text-[#B4431E] flex items-center justify-center text-base shrink-0 border border-orange-100">
-                        {item.icon}
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="font-bold text-xs text-stone-900 truncate">
-                          {item.titleHi}
-                        </h4>
-                        <p className="text-[11px] text-stone-500 truncate">
-                          {item.descHi}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs font-bold text-amber-950 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                        {item.cost} टोकन
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleSpend(item)}
-                        disabled={!canAfford}
-                        className="px-2.5 py-1 rounded-md bg-[#B4431E] hover:bg-[#963717] disabled:opacity-40 text-white font-bold text-xs transition-colors cursor-pointer"
-                      >
-                        भुनाएं
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Big Action: [टोकन भुनाएं] */}
-            <button
-              type="button"
-              onClick={() => setIsSpendModalOpen(true)}
-              id="open-redeem-modal-btn"
-              className="w-full min-h-[48px] h-12 rounded-xl bg-[#B4431E] hover:bg-[#963717] text-white font-extrabold text-sm shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-            >
-              <span>टोकन भुनाएं (Redeem Tokens)</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
         </div>
 
-        {/* Right Column (7 cols): हाल की गतिविधि */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-xl p-5 sm:p-6 border border-stone-200 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-              <h3 className="font-extrabold text-base sm:text-lg text-stone-900 flex items-center gap-2">
-                <History className="w-5 h-5 text-[#B4431E]" />
-                <span>हाल की गतिविधि (Recent Activity)</span>
-              </h3>
-              <span className="text-xs text-stone-500 font-semibold">इतिहास</span>
-            </div>
+        <div className="space-y-2">
+          {TOKEN_SPEND_OPTIONS.map((item) => {
+            const canAfford = tokenBalance >= item.cost;
 
-            <div className="space-y-2.5">
-              {transactions.slice(0, 10).map((tx) => (
-                <div
-                  key={tx.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-stone-50 border border-stone-150 hover:border-amber-300 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
-                      tx.type === 'debit' 
-                        ? 'bg-amber-100 text-amber-800' 
-                        : 'bg-emerald-100 text-emerald-800'
-                    }`}>
-                      {tx.type === 'debit' ? (
-                        <ArrowDownRight className="w-4 h-4 text-amber-700" />
-                      ) : (
-                        <ArrowUpRight className="w-4 h-4 text-emerald-700" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-bold text-xs sm:text-sm text-stone-900">
-                        {tx.description}
-                      </p>
-                      <p className="text-[11px] text-stone-400">
-                        {new Date(tx.timestamp).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-
-                  <span className={`text-xs sm:text-sm font-extrabold px-2.5 py-0.5 rounded-md ${
-                    tx.type === 'debit' 
-                      ? 'text-amber-800 bg-amber-50 border border-amber-200' 
-                      : 'text-emerald-800 bg-emerald-50 border border-emerald-200'
-                  }`}>
-                    {tx.type === 'debit' ? `-${tx.amount}` : `+${tx.amount}`} टोकन
-                  </span>
+            return (
+              <div
+                key={item.id}
+                className="p-3 rounded-lg border border-stone-200 hover:border-stone-300 transition-colors flex items-center justify-between gap-3 bg-white"
+              >
+                <div className="min-w-0">
+                  <h4 className="font-bold text-xs sm:text-sm text-stone-900 truncate">
+                    {item.titleHi}
+                  </h4>
+                  <p className="text-[11px] text-stone-500 truncate">
+                    {item.descHi}
+                  </p>
                 </div>
-              ))}
-            </div>
-          </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-xs font-bold text-stone-800 bg-stone-100 px-2 py-0.5 rounded border border-stone-200">
+                    {item.cost} tokens
+                  </span>
+                  <button
+                    onClick={() => handleSpend(item)}
+                    disabled={!canAfford}
+                    className="h-7 px-3 rounded bg-stone-900 hover:bg-black disabled:opacity-40 text-white font-semibold text-xs transition-colors cursor-pointer"
+                  >
+                    Redeem
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
+
+        {/* Big Action */}
+        <button
+          onClick={() => setIsSpendModalOpen(true)}
+          id="open-redeem-modal-btn"
+          className="w-full h-11 rounded-lg bg-stone-900 hover:bg-black text-white font-semibold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <span>Redeem Tokens (टोकन भुनाएं)</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Spend Modal */}
@@ -284,3 +266,4 @@ export const TokenDashboardScreen: React.FC<TokenDashboardScreenProps> = ({
     </div>
   );
 };
+

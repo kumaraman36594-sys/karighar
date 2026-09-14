@@ -97,7 +97,7 @@ export const getStoredArtists = (): Artist[] => {
   return artists;
 };
 
-export const saveArtist = (artist: Artist): void => {
+export const saveArtist = (artist: Artist): Artist[] => {
   const artists = getStoredArtists();
   const existingIndex = Array.isArray(artists) ? artists.findIndex(a => a.id === artist.id) : -1;
   if (existingIndex >= 0) {
@@ -106,6 +106,7 @@ export const saveArtist = (artist: Artist): void => {
     artists.unshift(artist);
   }
   setJson(STORAGE_KEYS.ARTISTS, artists);
+  return artists;
 };
 
 export const deleteArtist = (artistId: string): void => {
@@ -123,7 +124,7 @@ export const getStoredProducts = (): Product[] => {
   return products;
 };
 
-export const saveProduct = (product: Product): void => {
+export const saveProduct = (product: Product): Product[] => {
   const products = getStoredProducts();
   const index = Array.isArray(products) ? products.findIndex(p => p.id === product.id) : -1;
   if (index >= 0) {
@@ -140,6 +141,7 @@ export const saveProduct = (product: Product): void => {
     artist.productIds.push(product.id);
     saveArtist(artist);
   }
+  return products;
 };
 
 export const getStoredTokens = (): TokenTransaction[] => {

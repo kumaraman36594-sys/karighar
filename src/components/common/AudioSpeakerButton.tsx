@@ -12,6 +12,7 @@ interface AudioSpeakerButtonProps {
   className?: string;
   id?: string;
   title?: string;
+  isMuted?: boolean;
 }
 
 export const AudioSpeakerButton: React.FC<AudioSpeakerButtonProps> = ({
@@ -23,6 +24,7 @@ export const AudioSpeakerButton: React.FC<AudioSpeakerButtonProps> = ({
   className = '',
   id,
   title = 'Listen to voice instruction',
+  isMuted = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -39,6 +41,7 @@ export const AudioSpeakerButton: React.FC<AudioSpeakerButtonProps> = ({
 
   const handleToggleSpeak = (e: React.MouseEvent) => {
     e.stopPropagation();
+    console.log('Button clicked:', id || 'audio-speaker');
     if (isPlaying) {
       stopSpeech();
       setIsPlaying(false);

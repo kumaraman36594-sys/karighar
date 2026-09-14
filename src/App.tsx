@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { 
   UserRole, 
   Language, 
@@ -7,10 +7,7 @@ import {
   ScreenName, 
   DeviceMode,
   TokenTransaction,
-  Referral,
-  CartItem,
-  Order,
-  BuyerTab
+  Referral 
 } from './types';
 import { 
   StorageService, 
@@ -24,25 +21,10 @@ import {
   INITIAL_ARTISTS,
   MARKET_PRICING_DATA 
 } from './data/mockData';
-import { LanguageProvider, useLanguage } from './context/LanguageContext';
-import { Sparkles } from 'lucide-react';
-
-// Common Components
 import { Header } from './components/common/Header';
 import { Navigation } from './components/common/Navigation';
 
-// Buyer Components & Screens (Amazon Style)
-import { BuyerHeader } from './components/buyer/BuyerHeader';
-import { BuyerBottomNav } from './components/buyer/BuyerBottomNav';
-import { BuyerHomeScreen } from './components/screens/BuyerHomeScreen';
-import { BuyerSearchScreen } from './components/screens/BuyerSearchScreen';
-import { BuyerCategoriesScreen } from './components/screens/BuyerCategoriesScreen';
-import { BuyerCartScreen } from './components/screens/BuyerCartScreen';
-import { BuyerCheckoutScreen } from './components/screens/BuyerCheckoutScreen';
-import { BuyerOrdersScreen } from './components/screens/BuyerOrdersScreen';
-import { BuyerProfileScreen } from './components/screens/BuyerProfileScreen';
-
-// Seller & Common Screens
+// Screens
 import { SplashScreen } from './components/screens/SplashScreen';
 import { LanguageSelectScreen } from './components/screens/LanguageSelectScreen';
 import { RoleSelectScreen } from './components/screens/RoleSelectScreen';
@@ -56,6 +38,7 @@ import { AiProcessingScreen } from './components/screens/AiProcessingScreen';
 import { VoiceQaScreen } from './components/screens/VoiceQaScreen';
 import { ReviewListingScreen } from './components/screens/ReviewListingScreen';
 import { SuccessScreen } from './components/screens/SuccessScreen';
+import { BuyerHomeScreen } from './components/screens/BuyerHomeScreen';
 import { ProductDetailScreen } from './components/screens/ProductDetailScreen';
 import { ArtisanPublicProfileScreen } from './components/screens/ArtisanPublicProfileScreen';
 import { ArtistSwitcherScreen } from './components/screens/ArtistSwitcherScreen';
@@ -68,65 +51,98 @@ import { MyListingsScreen } from './components/screens/MyListingsScreen';
 import { SendInquiryModal } from './components/screens/SendInquiryModal';
 import { BuyCheckoutModal } from './components/screens/BuyCheckoutModal';
 
-function KarigharMain() {
-  const { language, setLanguage, t } = useLanguage();
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
 
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('App ErrorBoundary caught an error:', error, errorInfo);
+  }
+
+  handleReset = () => {
+    StorageService.resetToDefaults();
+    window.location.reload();
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-md w-full p-6 border border-stone-200 rounded-xl space-y-4 shadow-sm">
+            <div className="text-3xl">⚠️</div>
+            <h2 className="text-lg font-bold text-stone-900">
+              कुछ गलत हो गया / Something went wrong
+            </h2>
+            <p className="text-xs text-stone-600">
+              कृपया ऐप रीसेट करें या पृष्ठ को पुनः लोड करें।
+            </p>
+            <button
+              type="button"
+              onClick={this.handleReset}
+              className="w-full min-h-[48px] rounded-lg bg-stone-900 text-white text-sm font-semibold hover:bg-black transition-colors"
+            >
+              रीसेट करें और पुनः प्रयास करें (Reset & Reload)
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export default function App() {
   // Session & Preferences
-  const [session, setSession] = useState(() => {
-    const s = StorageService.getSession() || DEFAULT_SESSION;
-    return s;
-  });
-
+  const [session, setSession] = useState(() => StorageService.getSession() || DEFAULT_SESSION);
   const [artists, setArtists] = useState<Artist[]>(() => {
     const list = StorageService.getArtists();
     return Array.isArray(list) && list.length > 0 ? list : INITIAL_ARTISTS;
   });
-
   const [products, setProducts] = useState<Product[]>(() => {
     const list = StorageService.getProducts();
     return Array.isArray(list) && list.length > 0 ? list : MOCK_PRODUCTS;
   });
-
   const [transactions, setTransactions] = useState<TokenTransaction[]>(() => {
     const list = StorageService.getTransactions();
     return Array.isArray(list) ? list : [];
   });
-
   const [referrals, setReferrals] = useState<Referral[]>(() => {
     return TokenService.getReferrals();
   });
-
-  // Cart & Orders
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    const c = StorageService.getCart();
-    if (Array.isArray(c) && c.length > 0) return c;
-    // Pre-populate with 1 authentic craft so cart is ready to test
-    return [
-      { product: MOCK_PRODUCTS[0], quantity: 1 }
-    ];
-  });
-
-  const [orders, setOrders] = useState<Order[]>(() => {
-    return StorageService.getOrders();
-  });
-
-  // Navigation State
+  
+  // Navigation State: Show Language Selection first for new users
   const [currentScreen, setCurrentScreen] = useState<ScreenName>(() => {
-    try {
-      const storedLang = localStorage.getItem('karighar_language');
-      if (!storedLang) {
-        return 'language_select';
-      }
-    } catch {
-      // ignore
+    const sess = StorageService.getSession();
+    if (!sess?.hasSelectedLanguage) {
+      return 'language_select';
     }
-    return 'splash';
+    if (!sess?.hasCompletedOnboarding) {
+      return 'role_select';
+    }
+    return sess.role === 'buyer' ? 'marketplace' : 'camera_main';
   });
-
   const [activeTab, setActiveTab] = useState<string>('camera');
-  const [buyerTab, setBuyerTab] = useState<BuyerTab>('home');
   const [deviceMode, setDeviceMode] = useState<DeviceMode>('auto');
-  const [buyerSearchQuery, setBuyerSearchQuery] = useState<string>('');
+
+  const goTo = (s: ScreenName) => {
+    console.log('[Navigation] goTo screen:', s);
+    setCurrentScreen(s);
+  };
 
   // Temporary flow data
   const [tempMobile, setTempMobile] = useState<string>('');
@@ -150,7 +166,7 @@ function KarigharMain() {
     return artists.find(a => a?.id === artistId) || activeArtist;
   };
 
-  // Toast notification
+  // Helper to show notification
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3500);
@@ -163,125 +179,43 @@ function KarigharMain() {
     StorageService.saveSession(updated);
   };
 
-  // Cart operations
-  const handleAddToCart = (product: Product, quantity: number = 1) => {
-    setCartItems((prev) => {
-      const idx = prev.findIndex((item) => item.product.id === product.id);
-      let updated: CartItem[];
-      if (idx > -1) {
-        updated = [...prev];
-        updated[idx] = {
-          ...updated[idx],
-          quantity: updated[idx].quantity + quantity,
-        };
-      } else {
-        updated = [...prev, { product, quantity }];
-      }
-      StorageService.saveCart(updated);
-      return updated;
-    });
-    showToast(`${product.title} ${t('addedToCart')}`);
-  };
-
-  const handleUpdateCartQuantity = (productId: string, delta: number) => {
-    setCartItems((prev) => {
-      const updated = prev
-        .map((item) => {
-          if (item.product.id === productId) {
-            const nextQty = item.quantity + delta;
-            return nextQty > 0 ? { ...item, quantity: nextQty } : null;
-          }
-          return item;
-        })
-        .filter(Boolean) as CartItem[];
-      StorageService.saveCart(updated);
-      return updated;
-    });
-  };
-
-  const handleRemoveFromCart = (productId: string) => {
-    setCartItems((prev) => {
-      const updated = prev.filter((item) => item.product.id !== productId);
-      StorageService.saveCart(updated);
-      return updated;
-    });
-    showToast('Removed item from Cart');
-  };
-
-  const handleOrderPlaced = (newOrder: Order) => {
-    StorageService.saveOrder(newOrder);
-    setOrders(StorageService.getOrders());
-    setCartItems([]);
-    StorageService.saveCart([]);
-
-    // Credit tokens to seller for the sale
-    const isFirstSale = !transactions.some(t => t.source === 'sale');
-    const rewardTokens = isFirstSale ? 25 : 5;
-    const nextBal = (session.tokenBalance || 245) + rewardTokens;
-    updateSession({ tokenBalance: nextBal, totalTokens: (session.totalTokens || 245) + rewardTokens });
-
-    const newTx: TokenTransaction = {
-      id: `tx-${Date.now()}`,
-      amount: rewardTokens,
-      type: 'credit',
-      source: 'sale',
-      description: `${newOrder.productTitle || 'उत्पाद'} बिका (ऑर्डर #${newOrder.id.slice(-5)})`,
-      timestamp: new Date().toISOString(),
-    };
-    setTransactions(StorageService.addTransaction(newTx));
-
-    showToast('Order Placed Successfully! Track your shipment below.');
-    setBuyerTab('orders');
-    setCurrentScreen('buyer_orders');
-  };
-
-  // 1. Splash finished
+  // 1. Splash finished handler
   const handleSplashFinish = () => {
-    try {
-      const storedLang = localStorage.getItem('karighar_language');
-      if (!storedLang && !session.hasSelectedLanguage) {
-        setCurrentScreen('language_select');
-        return;
-      }
-    } catch {
-      // ignore
-    }
-
-    if (!session.hasCompletedOnboarding) {
+    if (!session.hasSelectedLanguage) {
+      setCurrentScreen('language_select');
+    } else if (!session.hasCompletedOnboarding) {
       setCurrentScreen('role_select');
     } else if (session.role === 'buyer') {
-      setCurrentScreen('buyer_home');
-      setBuyerTab('home');
+      setCurrentScreen('marketplace');
+      setActiveTab('marketplace');
     } else {
       setCurrentScreen('camera_main');
       setActiveTab('camera');
     }
   };
 
-  // 1b. Language Select
+  // 1b. Language Select handler
   const handleSelectLanguage = (lang: Language) => {
-    setLanguage(lang);
     setStoredLanguage(lang);
     updateSession({ language: lang, hasSelectedLanguage: true });
-    
     if (!session.hasCompletedOnboarding) {
       setCurrentScreen('role_select');
     } else if (session.role === 'buyer') {
-      setCurrentScreen('buyer_home');
-      setBuyerTab('home');
+      setCurrentScreen('marketplace');
+      setActiveTab('marketplace');
     } else {
       setCurrentScreen('camera_main');
       setActiveTab('camera');
     }
   };
 
-  // 2. Role Select
+  // 2. Role Select handler
   const handleSelectRole = (role: UserRole) => {
     updateSession({ role });
     if (role === 'buyer') {
       updateSession({ hasCompletedOnboarding: true });
-      setCurrentScreen('buyer_home');
-      setBuyerTab('home');
+      setCurrentScreen('marketplace');
+      setActiveTab('marketplace');
     } else {
       setCurrentScreen('seller_login');
     }
@@ -296,6 +230,7 @@ function KarigharMain() {
   // 4. OTP verified
   const handleOtpVerified = () => {
     updateSession({ mobileNumber: tempMobile });
+    // If no artist created yet or onboarding incomplete, prompt referral code first
     if (!session.hasCompletedOnboarding) {
       setCurrentScreen('referral_entry');
     } else {
@@ -316,7 +251,7 @@ function KarigharMain() {
       amount: 25,
       type: 'credit',
       source: 'referral',
-      description: `रेफरल कोड बोनस (${code}) लागू किया`,
+      description: `🎁 रेफरल कोड बोनस (${code}) लागू किया`,
       timestamp: new Date().toISOString(),
     };
     setTransactions(StorageService.addTransaction(newTx));
@@ -327,7 +262,7 @@ function KarigharMain() {
       totalTokens: nextTot,
     });
 
-    showToast('+25 टोकन मिले! रेफरल बोनस सफलतापूर्वक लागू।');
+    showToast('🎁 +25 टोकन मिले! रेफरल बोनस सफलतापूर्वक लागू।');
     setCurrentScreen('artist_register');
   };
 
@@ -338,7 +273,7 @@ function KarigharMain() {
   // 5. Artist registered
   const handleSaveArtist = (newArtist: Artist) => {
     const isFirstArtist = artists.length === 0;
-    const rewardTokens = isFirstArtist ? 10 : 5;
+    const rewardTokens = isFirstArtist ? 10 : 5; // +10 for first, +5 for additional
     const updatedArtists = StorageService.saveArtist(newArtist);
     setArtists(updatedArtists);
     
@@ -352,19 +287,20 @@ function KarigharMain() {
       totalTokens: nextTot,
     });
     
+    // Add token tx
     const newTx: TokenTransaction = {
       id: `tx-${Date.now()}`,
       amount: rewardTokens,
       type: 'credit',
       source: 'onboarding',
       description: isFirstArtist 
-        ? `पहला कारीगर जोड़ा (${newArtist.name})` 
-        : `नया कारीगर जोड़ा (${newArtist.name})`,
+        ? `✅ पहला कारीगर जोड़ा (${newArtist.name})` 
+        : `✅ नया कारीगर जोड़ा (${newArtist.name})`,
       timestamp: new Date().toISOString(),
     };
     setTransactions(StorageService.addTransaction(newTx));
 
-    showToast(`+${rewardTokens} टोकन मिले! (${newArtist.name} पंजीकृत)`);
+    showToast(`💰 +${rewardTokens} टोकन मिले! (${newArtist.name} पंजीकृत)`);
     setCurrentScreen('camera_main');
     setActiveTab('camera');
   };
@@ -375,12 +311,12 @@ function KarigharMain() {
     setCurrentScreen('ai_processing');
   };
 
-  // 7. AI processing complete
+  // 7. AI processing finished
   const handleAiProcessingComplete = () => {
     setCurrentScreen('voice_qa');
   };
 
-  // 8. Voice QA finished
+  // 8. Voice QA finished -> Create pending product draft
   const handleFinishVoiceQa = (answers: {
     category: string;
     material: string;
@@ -409,7 +345,7 @@ function KarigharMain() {
         description: 0.78,
         category: 0.95,
         material: 0.88,
-        price: 0.65,
+        price: 0.65, // Low confidence warning as per Section 10
       },
       createdAt: new Date().toISOString(),
     };
@@ -423,6 +359,7 @@ function KarigharMain() {
     const updatedProducts = StorageService.saveProduct(approvedProduct);
     setProducts(updatedProducts);
 
+    // Update artist product list
     if (activeArtist) {
       const updatedArtist = {
         ...activeArtist,
@@ -431,6 +368,7 @@ function KarigharMain() {
       setArtists(StorageService.saveArtist(updatedArtist));
     }
 
+    // Award +5 tokens for completing artist listing (photo + voice)
     const nextBal = (session.tokenBalance || 245) + 5;
     updateSession({ tokenBalance: nextBal, totalTokens: (session.totalTokens || 245) + 5 });
     const newTx: TokenTransaction = {
@@ -438,19 +376,44 @@ function KarigharMain() {
       amount: 5,
       type: 'credit',
       source: 'listing',
-      description: `उत्पाद लिस्टिंग पूर्ण (फ़ोटो + आवाज़): ${approvedProduct.title}`,
+      description: `✅ उत्पाद लिस्टिंग पूर्ण (फ़ोटो + आवाज़): ${approvedProduct.title}`,
       timestamp: new Date().toISOString(),
     };
     setTransactions(StorageService.addTransaction(newTx));
 
-    showToast('+5 टोकन मिले! (उत्पाद लिस्टिंग पूर्ण)');
+    showToast('💰 +5 टोकन मिले! (उत्पाद लिस्टिंग पूर्ण)');
     setPendingProduct(approvedProduct);
     setCurrentScreen('success');
   };
 
-  // 10. Redeem tokens
+  // 10. Buy order success
+  const handleOrderSuccess = (orderInfo: { product: Product; buyerName: string; totalAmount: number }) => {
+    const isFirstSale = !transactions.some(t => t.source === 'sale');
+    const rewardTokens = isFirstSale ? 25 : 5; // +20 first sale bonus + 5 sale
+    const nextBal = (session.tokenBalance || 245) + rewardTokens;
+    updateSession({ tokenBalance: nextBal, totalTokens: (session.totalTokens || 245) + rewardTokens });
+
+    const newTx: TokenTransaction = {
+      id: `tx-${Date.now()}`,
+      amount: rewardTokens,
+      type: 'credit',
+      source: 'sale',
+      description: isFirstSale 
+        ? `🏆 पहली बिक्री बोनस (+20) एवं बिक्री (+5): ${orderInfo.product.title}`
+        : `✅ ${orderInfo.product.title} बिका (क्रेता: ${orderInfo.buyerName})`,
+      timestamp: new Date().toISOString(),
+    };
+    setTransactions(StorageService.addTransaction(newTx));
+
+    showToast(isFirstSale 
+      ? `🏆 +${rewardTokens} टोकन! (पहली बिक्री का विशेष रिवॉर्ड)` 
+      : `💰 +5 टोकन मिले! (${orderInfo.product.title} बिका)`
+    );
+  };
+
+  // 11. Redeem tokens
   const handleRedeemTokens = (cost: number, perkTitle: string) => {
-    const nextBal = (session.tokenBalance || 0) - cost;
+    const nextBal = session.tokenBalance - cost;
     updateSession({ tokenBalance: nextBal });
 
     const newTx: TokenTransaction = {
@@ -464,15 +427,11 @@ function KarigharMain() {
     setTransactions(StorageService.addTransaction(newTx));
   };
 
-  // 11. Tab Change for Seller side
+  // 12. Switch tab from navigation
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
     if (tabId === 'camera') setCurrentScreen('camera_main');
-    else if (tabId === 'marketplace') {
-      updateSession({ role: 'buyer' });
-      setCurrentScreen('buyer_home');
-      setBuyerTab('home');
-    }
+    else if (tabId === 'marketplace') setCurrentScreen('marketplace');
     else if (tabId === 'listings') setCurrentScreen('my_listings');
     else if (tabId === 'tokens') setCurrentScreen('tokens');
     else if (tabId === 'my-artists') setCurrentScreen('artist_switcher');
@@ -487,8 +446,6 @@ function KarigharMain() {
       setArtists(StorageService.getArtists());
       setProducts(StorageService.getProducts());
       setTransactions(StorageService.getTransactions());
-      setCartItems([]);
-      setOrders(StorageService.getOrders());
       setCurrentScreen('role_select');
       showToast('Demo data reset successfully!');
     }
@@ -503,18 +460,18 @@ function KarigharMain() {
     setCurrentScreen('role_select');
   };
 
-  // Container styling for Seller mode
+  // Responsive device container wrapper styles
   const getDeviceContainerClass = () => {
     switch (deviceMode) {
       case 'phone':
-        return 'max-w-md mx-auto min-h-screen bg-[#FDFBF7] shadow-lg border-x border-stone-200 relative';
+        return 'max-w-[420px] mx-auto min-h-screen bg-white shadow-2xl border-x border-gray-300 relative';
       case 'tablet':
-        return 'max-w-4xl mx-auto min-h-screen bg-[#FDFBF7] shadow-md border-x border-stone-200 relative';
+        return 'max-w-[820px] mx-auto min-h-screen bg-white shadow-xl border-x border-gray-200 relative';
       case 'laptop':
-        return 'w-full max-w-7xl mx-auto min-h-screen bg-[#FDFBF7]';
+        return 'max-w-[1240px] mx-auto min-h-screen bg-[#f8f9fe]';
       case 'auto':
       default:
-        return 'w-full min-h-screen bg-[#FDFBF7]';
+        return 'w-full min-h-screen bg-[#f8f9fe]';
     }
   };
 
@@ -638,8 +595,8 @@ function KarigharMain() {
             isAudioMuted={session.isAudioMuted}
             onViewInMarketplace={() => {
               updateSession({ role: 'buyer' });
-              setCurrentScreen('buyer_home');
-              setBuyerTab('home');
+              setCurrentScreen('marketplace');
+              setActiveTab('marketplace');
             }}
             onCreateAnother={() => {
               setCurrentScreen('camera_main');
@@ -648,133 +605,31 @@ function KarigharMain() {
           />
         ) : null;
 
-      // Buyer Specific Screens
-      case 'buyer_home':
-      case 'marketplace':
-        return (
-          <BuyerHomeScreen
-            products={products}
-            artists={artists}
-            onSelectProduct={(prod) => {
-              setSelectedProduct(prod);
-              setCurrentScreen('product_detail');
-            }}
-            onSelectArtist={(art) => {
-              setSelectedArtist(art);
-              setCurrentScreen('artisan_profile');
-            }}
-            onAddToCart={(prod) => handleAddToCart(prod, 1)}
-            onOpenSearch={() => setCurrentScreen('buyer_search')}
-          />
-        );
-
-      case 'buyer_search':
-        return (
-          <BuyerSearchScreen
-            products={products}
-            initialQuery={buyerSearchQuery}
-            onSelectProduct={(prod) => {
-              setSelectedProduct(prod);
-              setCurrentScreen('product_detail');
-            }}
-            onAddToCart={(prod) => handleAddToCart(prod, 1)}
-            onBack={() => {
-              setCurrentScreen('buyer_home');
-              setBuyerTab('home');
-            }}
-          />
-        );
-
-      case 'buyer_categories':
-        return (
-          <BuyerCategoriesScreen
-            onSelectCategory={(catId) => {
-              setBuyerSearchQuery(catId);
-              setCurrentScreen('buyer_search');
-            }}
-          />
-        );
-
-      case 'buyer_cart':
-        return (
-          <BuyerCartScreen
-            cartItems={cartItems}
-            onUpdateQuantity={handleUpdateCartQuantity}
-            onRemoveItem={handleRemoveFromCart}
-            onProceedToCheckout={() => setCurrentScreen('buyer_checkout')}
-            onContinueShopping={() => {
-              setCurrentScreen('buyer_home');
-              setBuyerTab('home');
-            }}
-            onSelectProduct={(prod) => {
-              setSelectedProduct(prod);
-              setCurrentScreen('product_detail');
-            }}
-          />
-        );
-
-      case 'buyer_checkout':
-        return (
-          <BuyerCheckoutScreen
-            cartItems={cartItems}
-            onBack={() => setCurrentScreen('buyer_cart')}
-            onOrderPlaced={handleOrderPlaced}
-          />
-        );
-
-      case 'buyer_orders':
-        return (
-          <BuyerOrdersScreen
-            orders={orders}
-            onContinueShopping={() => {
-              setCurrentScreen('buyer_home');
-              setBuyerTab('home');
-            }}
-          />
-        );
-
-      case 'buyer_profile':
-        return (
-          <BuyerProfileScreen
-            session={session}
-            onNavigateOrders={() => {
-              setBuyerTab('orders');
-              setCurrentScreen('buyer_orders');
-            }}
-            onSwitchToSeller={() => {
-              updateSession({ role: 'seller' });
-              setCurrentScreen('camera_main');
-              setActiveTab('camera');
-            }}
-            onLogout={handleLogout}
-          />
-        );
-
       case 'product_detail':
         return selectedProduct ? (
           <ProductDetailScreen
             product={selectedProduct}
             artist={getArtistForProduct(selectedProduct.artistId)}
-            similarProducts={products.filter(p => p.id !== selectedProduct.id && p.category === selectedProduct.category)}
+            language={session.language}
+            isAudioMuted={session.isAudioMuted}
             onBack={() => {
               if (session.role === 'seller') {
                 setCurrentScreen('my_listings');
               } else {
-                setCurrentScreen('buyer_home');
+                setCurrentScreen('marketplace');
               }
             }}
-            onAddToCart={(prod, qty) => handleAddToCart(prod, qty)}
-            onBuyNow={(prod, qty) => {
-              handleAddToCart(prod, qty);
-              setCurrentScreen('buyer_checkout');
+            onSendInquiry={(prod) => {
+              setSelectedProduct(prod);
+              setIsInquiryOpen(true);
+            }}
+            onBuyNow={(prod) => {
+              setSelectedProduct(prod);
+              setIsBuyModalOpen(true);
             }}
             onViewArtist={(art) => {
               setSelectedArtist(art);
               setCurrentScreen('artisan_profile');
-            }}
-            onSelectSimilarProduct={(prod) => {
-              setSelectedProduct(prod);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
         ) : null;
@@ -790,7 +645,7 @@ function KarigharMain() {
               if (selectedProduct) {
                 setCurrentScreen('product_detail');
               } else {
-                setCurrentScreen(session.role === 'buyer' ? 'buyer_home' : 'camera_main');
+                setCurrentScreen('marketplace');
               }
             }}
             onSelectProduct={(prod) => {
@@ -812,94 +667,59 @@ function KarigharMain() {
             activeArtistId={session.activeArtistId}
             language={session.language}
             isAudioMuted={session.isAudioMuted}
-            onBack={() => setCurrentScreen('camera_main')}
-            onSelectArtist={(artistId) => {
-              updateSession({ activeArtistId: artistId });
+            onSelectArtist={(artist) => {
+              updateSession({ activeArtistId: artist.id });
+              showToast(`Switched active artist to ${artist.name}`);
               setCurrentScreen('camera_main');
-              showToast(`Switched active artisan.`);
+              setActiveTab('camera');
             }}
             onAddNewArtist={() => setCurrentScreen('artist_register')}
-            onDeleteArtist={(artistId) => {
-              const updated = StorageService.deleteArtist(artistId);
-              setArtists(updated);
-              if (session.activeArtistId === artistId) {
-                updateSession({ activeArtistId: updated[0]?.id });
-              }
-              showToast('Artisan profile deleted.');
-            }}
+            onBack={() => setCurrentScreen('camera_main')}
           />
         );
 
-      case 'token_dashboard':
       case 'tokens':
         return (
           <TokenDashboardScreen
-            session={session}
+            tokenBalance={session.tokenBalance}
             transactions={transactions}
-            artistsCount={artists.length}
             language={session.language}
+            referralCount={session.referralCount || referrals.length || 7}
+            referralTier={session.referralTier || 1}
             isAudioMuted={session.isAudioMuted}
-            onBack={() => setCurrentScreen(session.role === 'buyer' ? 'buyer_home' : 'camera_main')}
-            onOpenReferrals={() => setCurrentScreen('referral_dashboard')}
             onRedeemTokens={handleRedeemTokens}
+            onOpenReferrals={() => setCurrentScreen('referral_dashboard')}
           />
         );
 
       case 'referral_dashboard':
         return (
           <ReferralDashboardScreen
-            session={session}
+            language={session.language}
+            referralCode={session.referralCode || `KARIGHAR-${activeArtist.name.toUpperCase().replace(/[^A-Z]/g, '') || 'KALA'}-789`}
+            referralCount={session.referralCount || referrals.length || 7}
+            referralTier={session.referralTier || 1}
+            tokensEarned={session.totalTokens || 245}
             referrals={referrals}
-            language={session.language}
             isAudioMuted={session.isAudioMuted}
-            onBack={() => setCurrentScreen('token_dashboard')}
-            onShareLink={(code) => {
-              if (navigator.share) {
-                navigator.share({
-                  title: 'Join Karighar (कारीगर)',
-                  text: `Join Karighar using my referral code ${code} and get +25 bonus tokens!`,
-                  url: window.location.origin,
-                });
-              } else {
-                navigator.clipboard?.writeText(code);
-                showToast('Referral code copied to clipboard!');
-              }
+            onBack={() => {
+              setCurrentScreen('tokens');
+              setActiveTab('tokens');
             }}
-          />
-        );
-
-      case 'profile':
-        return (
-          <ProfileScreen
-            session={session}
-            artists={artists}
-            activeArtist={activeArtist}
-            language={session.language}
-            isAudioMuted={session.isAudioMuted}
-            deviceMode={deviceMode}
-            onUpdateSession={updateSession}
-            onSwitchArtist={() => setCurrentScreen('artist_switcher')}
-            onOpenTokens={() => setCurrentScreen('token_dashboard')}
-            onOpenReferrals={() => setCurrentScreen('referral_dashboard')}
-            onChangeLanguage={() => setCurrentScreen('language_select')}
-            onResetDemoData={handleResetData}
-            onLogout={handleLogout}
+            onOpenTokens={() => {
+              setCurrentScreen('tokens');
+              setActiveTab('tokens');
+            }}
           />
         );
 
       case 'my_listings':
-      case 'listings':
         return (
           <MyListingsScreen
-            products={products}
-            artists={artists}
-            activeArtistId={session.activeArtistId}
+            products={products.filter(p => p.artistId === activeArtist?.id || p.artistId === 'artist-1')}
+            activeArtist={activeArtist}
             language={session.language}
-            isAudioMuted={session.isAudioMuted}
-            onAddNewProduct={() => {
-              setCurrentScreen('camera_main');
-              setActiveTab('camera');
-            }}
+            onNewProduct={() => setCurrentScreen('camera_capture')}
             onViewProduct={(prod) => {
               setSelectedProduct(prod);
               setCurrentScreen('product_detail');
@@ -907,12 +727,63 @@ function KarigharMain() {
           />
         );
 
-      case 'camera_main':
+      case 'profile':
+        return (
+          <ProfileScreen
+            role={session.role}
+            language={session.language}
+            activeArtist={activeArtist}
+            mobileNumber={session.mobileNumber || '+91 98765 43210'}
+            totalArtists={artists.length}
+            totalProducts={products.length}
+            tokenBalance={session.tokenBalance}
+            referralCount={session.referralCount || referrals.length || 7}
+            isAudioMuted={session.isAudioMuted}
+            onSwitchRole={(newRole) => {
+              updateSession({ role: newRole });
+              if (newRole === 'buyer') {
+                setCurrentScreen('marketplace');
+                setActiveTab('marketplace');
+              } else {
+                setCurrentScreen('camera_main');
+                setActiveTab('camera');
+              }
+            }}
+            onChangeLanguage={(lang) => updateSession({ language: lang })}
+            onToggleAudio={() => updateSession({ isAudioMuted: !session.isAudioMuted })}
+            onResetDemoData={handleResetData}
+            onLogout={handleLogout}
+            onNavigateToReferrals={() => setCurrentScreen('referral_dashboard')}
+            onNavigateToTokens={() => {
+              setCurrentScreen('tokens');
+              setActiveTab('tokens');
+            }}
+          />
+        );
+
+      case 'marketplace':
       default:
+        return (
+          <BuyerHomeScreen
+            products={products}
+            artists={artists}
+            language={session.language}
+            onSelectProduct={(prod) => {
+              setSelectedProduct(prod);
+              setCurrentScreen('product_detail');
+            }}
+            onSelectArtist={(art) => {
+              setSelectedArtist(art);
+              setCurrentScreen('artisan_profile');
+            }}
+          />
+        );
+
+      case 'camera_main':
         return (
           <CameraMainScreen
             activeArtist={activeArtist}
-            recentProducts={products.slice(0, 3)}
+            recentProducts={products.filter(p => p.artistId === activeArtist?.id || p.artistId === 'artist-1')}
             language={session.language}
             isAudioMuted={session.isAudioMuted}
             onTakePhoto={() => setCurrentScreen('camera_capture')}
@@ -934,20 +805,7 @@ function KarigharMain() {
     }
   };
 
-  // Screens that should not display the chrome
-  const isDedicatedBuyerScreen = session.role === 'buyer' && [
-    'buyer_home',
-    'marketplace',
-    'buyer_search',
-    'buyer_categories',
-    'buyer_cart',
-    'buyer_checkout',
-    'buyer_orders',
-    'buyer_profile',
-    'product_detail',
-    'artisan_profile'
-  ].includes(currentScreen);
-
+  // Determine if top header & navigation should be shown
   const hideChromeScreens: ScreenName[] = [
     'splash', 
     'language_select',
@@ -962,75 +820,13 @@ function KarigharMain() {
   ];
   const shouldShowChrome = !hideChromeScreens.includes(currentScreen);
 
-  // If Buyer Mode: Render Full-Width Amazon-style marketplace!
-  if (isDedicatedBuyerScreen) {
-    return (
-      <div className="min-h-screen bg-white text-[#111111] font-sans antialiased flex flex-col justify-between">
-        {/* Toast Notification */}
-        {toastMessage && (
-          <div className="fixed top-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 animate-fade-in">
-            <div className="bg-[#111111] text-white px-4 py-2.5 rounded-lg shadow-xl text-xs sm:text-sm font-semibold flex items-center gap-2 border border-white/10">
-              <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>{toastMessage}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Amazon-style Sticky Header */}
-        <BuyerHeader
-          cartCount={cartItems.reduce((acc, i) => acc + i.quantity, 0)}
-          activeTab={buyerTab}
-          onNavigateTab={(tab) => {
-            setBuyerTab(tab);
-            if (tab === 'home') setCurrentScreen('buyer_home');
-            else if (tab === 'categories') setCurrentScreen('buyer_categories');
-            else if (tab === 'cart') setCurrentScreen('buyer_cart');
-            else if (tab === 'orders') setCurrentScreen('buyer_orders');
-            else if (tab === 'profile') setCurrentScreen('buyer_profile');
-          }}
-          onOpenSearch={() => setCurrentScreen('buyer_search')}
-          searchQuery={buyerSearchQuery}
-          onSearchChange={setBuyerSearchQuery}
-          onSearchSubmit={(q) => {
-            setBuyerSearchQuery(q);
-            setCurrentScreen('buyer_search');
-          }}
-          onSwitchToSeller={() => {
-            updateSession({ role: 'seller' });
-            setCurrentScreen('camera_main');
-            setActiveTab('camera');
-          }}
-        />
-
-        {/* Full-width screen body */}
-        <main className="flex-1 w-full bg-white">
-          {renderCurrentScreen()}
-        </main>
-
-        {/* Amazon-style Bottom Navigation (5 tabs) */}
-        <BuyerBottomNav
-          activeTab={buyerTab}
-          onTabChange={(tab) => {
-            setBuyerTab(tab);
-            if (tab === 'home') setCurrentScreen('buyer_home');
-            else if (tab === 'categories') setCurrentScreen('buyer_categories');
-            else if (tab === 'cart') setCurrentScreen('buyer_cart');
-            else if (tab === 'orders') setCurrentScreen('buyer_orders');
-            else if (tab === 'profile') setCurrentScreen('buyer_profile');
-          }}
-          cartCount={cartItems.reduce((acc, i) => acc + i.quantity, 0)}
-        />
-      </div>
-    );
-  }
-
-  // Seller Mode & Onboarding Screens
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-stone-900 font-sans">
+    <div className="min-h-screen bg-[#f1f3f9] text-gray-900 font-sans">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 animate-fade-in">
-          <div className="bg-stone-900/95 text-white px-4 py-2.5 rounded-xl shadow-xl text-xs sm:text-sm font-semibold flex items-center gap-2 border border-white/10 backdrop-blur-md">
+          <div className="bg-gray-900/95 text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs sm:text-sm font-semibold flex items-center gap-2 border border-white/10 backdrop-blur-md">
+            <span>✨</span>
             <span>{toastMessage}</span>
           </div>
         </div>
@@ -1049,17 +845,14 @@ function KarigharMain() {
             onSwitchRole={(newRole) => {
               updateSession({ role: newRole });
               if (newRole === 'buyer') {
-                setCurrentScreen('buyer_home');
-                setBuyerTab('home');
+                setCurrentScreen('marketplace');
+                setActiveTab('marketplace');
               } else {
                 setCurrentScreen('camera_main');
                 setActiveTab('camera');
               }
             }}
-            onChangeLanguage={(lang) => {
-              setLanguage(lang);
-              updateSession({ language: lang });
-            }}
+            onChangeLanguage={(lang) => updateSession({ language: lang })}
             onToggleAudio={() => updateSession({ isAudioMuted: !session.isAudioMuted })}
             onSwitchArtist={() => setCurrentScreen('artist_switcher')}
             onChangeDeviceMode={setDeviceMode}
@@ -1095,7 +888,7 @@ function KarigharMain() {
           product={selectedProduct}
           artist={getArtistForProduct(selectedProduct.artistId)}
           onClose={() => setIsInquiryOpen(false)}
-          onSubmit={() => {
+          onSubmit={(data) => {
             showToast(`Inquiry sent to ${activeArtist.name}!`);
           }}
         />
@@ -1108,31 +901,9 @@ function KarigharMain() {
           product={selectedProduct}
           artist={getArtistForProduct(selectedProduct.artistId)}
           onClose={() => setIsBuyModalOpen(false)}
-          onOrderSuccess={(orderInfo) => {
-            handleOrderPlaced({
-              id: `ord-${Date.now()}`,
-              totalPrice: orderInfo.totalAmount,
-              buyerName: orderInfo.buyerName,
-              buyerMobile: '+91 98111 22334',
-              shippingAddress: 'Saket, New Delhi',
-              productTitle: orderInfo.product.title,
-              productPrice: orderInfo.product.price,
-              productImage: orderInfo.product.image || orderInfo.product.imagePaths?.[0] || '',
-              artistId: orderInfo.product.artistId,
-              status: 'in_transit',
-              createdAt: new Date().toISOString(),
-            });
-          }}
+          onOrderSuccess={handleOrderSuccess}
         />
       )}
     </div>
-  );
-}
-
-export default function App() {
-  return (
-    <LanguageProvider>
-      <KarigharMain />
-    </LanguageProvider>
   );
 }

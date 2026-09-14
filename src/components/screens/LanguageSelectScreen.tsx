@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, ArrowRight, Sparkles, Globe, Palette } from 'lucide-react';
+import { Volume2, Check } from 'lucide-react';
 import { Language } from '../../types';
-import { speak, stopSpeech } from '../../utils/speech';
-import { LANGUAGE_AUDIO_FEEDBACK } from '../../utils/translations';
-import { AudioSpeakerButton } from '../common/AudioSpeakerButton';
-import { useLanguage } from '../../context/LanguageContext';
+import { speak, stopSpeech } from '../../services/voiceService';
+import { setStoredLanguage } from '../../utils/storage';
+import { KarigharWordmark } from '../common/KarigharWordmark';
 
 interface LanguageSelectScreenProps {
   onSelectLanguage: (lang: Language) => void;
@@ -12,34 +11,44 @@ interface LanguageSelectScreenProps {
   isAudioMuted?: boolean;
 }
 
-interface LanguageCardOption {
+interface LanguageOption {
   code: Language;
-  nameNative: string;
-  nameEnglish: string;
-  scriptBadge: string;
-  hearPrompt: string;
+  native: string;
+  english: string;
+  flag: string;
+  ttsFeedback: string;
 }
 
-const LANGUAGES: LanguageCardOption[] = [
-  { code: 'hi', nameNative: 'हिन्दी', nameEnglish: 'Hindi', scriptBadge: 'देवनागरी', hearPrompt: 'हिन्दी भाषा' },
-  { code: 'en', nameNative: 'English', nameEnglish: 'English', scriptBadge: 'Latin', hearPrompt: 'English language' },
-  { code: 'ta', nameNative: 'தமிழ்', nameEnglish: 'Tamil', scriptBadge: 'தமிழ்', hearPrompt: 'தமிழ் மொழி' },
-  { code: 'te', nameNative: 'తెలుగు', nameEnglish: 'Telugu', scriptBadge: 'తెలుగు', hearPrompt: 'తెలుగు భాష' },
-  { code: 'bn', nameNative: 'বাংলা', nameEnglish: 'Bengali', scriptBadge: 'বাংলা', hearPrompt: 'বাংলা ভাষা' },
-  { code: 'mr', nameNative: 'मराठी', nameEnglish: 'Marathi', scriptBadge: 'देवनागरी', hearPrompt: 'मराठी भाषा' },
-  { code: 'gu', nameNative: 'ગુજરાતી', nameEnglish: 'Gujarati', scriptBadge: 'ગુજરાતી', hearPrompt: 'ગુજરાતી ભાષા' },
-  { code: 'kn', nameNative: 'ಕನ್ನಡ', nameEnglish: 'Kannada', scriptBadge: 'ಕನ್ನಡ', hearPrompt: 'ಕನ್ನಡ ಭಾಷೆ' },
+const LANGUAGES: LanguageOption[] = [
+  { code: 'hi', native: 'हिन्दी', english: 'Hindi', flag: '🇮🇳', ttsFeedback: 'हिन्दी चुनी गई' },
+  { code: 'en', native: 'English', english: 'English', flag: '🇮🇳', ttsFeedback: 'English selected' },
+  { code: 'ta', native: 'தமிழ்', english: 'Tamil', flag: '🇮🇳', ttsFeedback: 'தமிழ் தேர்ந்தெடுக்கப்பட்டது' },
+  { code: 'te', native: 'తెలుగు', english: 'Telugu', flag: '🇮🇳', ttsFeedback: 'తెలుగు ఎంచుకోಬడింది' },
+  { code: 'bn', native: 'বাংলা', english: 'Bengali', flag: '🇮🇳', ttsFeedback: 'বাংলা নির্বাচিত হয়েছে' },
+  { code: 'mr', native: 'मराठी', english: 'Marathi', flag: '🇮🇳', ttsFeedback: 'मराठी निवडली गेली' },
+  { code: 'gu', native: 'ગુજરાતી', english: 'Gujarati', flag: '🇮🇳', ttsFeedback: 'ગુજરાતી પસંદ કરવામાં આવી' },
+  { code: 'kn', native: 'ಕನ್ನಡ', english: 'Kannada', flag: '🇮🇳', ttsFeedback: 'ಕನ್ನಡ ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ' },
+  { code: 'mai', native: 'मैथिली', english: 'Maithili', flag: '🇮🇳', ttsFeedback: 'मैथिली चुनल गेल' },
+  { code: 'bho', native: 'भोजपुरी', english: 'Bhojpuri', flag: '🇮🇳', ttsFeedback: 'भोजपुरी चुनल गइल' },
+  { code: 'or', native: 'ଓଡ଼ିଆ', english: 'Odia', flag: '🇮🇳', ttsFeedback: 'ଓଡ଼ିଆ ବଛାଗଲା' },
+  { code: 'pa', native: 'ਪੰਜਾਬੀ', english: 'Punjabi', flag: '🇮🇳', ttsFeedback: 'ਪੰਜਾਬੀ ਚੁਣੀ ਗਈ' },
 ];
 
 export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
   onSelectLanguage,
-  currentLanguage,
+  currentLanguage = 'hi',
   isAudioMuted = false,
 }) => {
-  const { language: ctxLanguage, setLanguage, t } = useLanguage();
-  const [selectedLang, setSelectedLang] = useState<Language>(currentLanguage || ctxLanguage || 'hi');
+  const [selectedLang, setSelectedLang] = useState<Language>(currentLanguage);
 
-  // Auto-play voice prompt on screen open
+  // Sync selectedLang if prop changes
+  useEffect(() => {
+    if (currentLanguage) {
+      setSelectedLang(currentLanguage);
+    }
+  }, [currentLanguage]);
+
+  // Voice announcement on initial render
   useEffect(() => {
     if (!isAudioMuted) {
       const timer = setTimeout(() => {
@@ -52,134 +61,117 @@ export const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({
     }
   }, [isAudioMuted]);
 
-  const handleCardClick = (lang: LanguageCardOption) => {
+  const handleSpeakTitle = () => {
+    console.log('Button clicked:', 'hear-describe-languages');
+    speak('अपनी भाषा चुनें। नीचे दिए गए किसी भी विकल्प पर टैप करें। Choose your language to continue.', 'hi');
+  };
+
+  const handleLanguageTap = (lang: LanguageOption) => {
+    console.log('Button clicked:', `select-language-${lang.code}`);
     setSelectedLang(lang.code);
-    setLanguage(lang.code);
+
+    // 1. Save language to localStorage
+    setStoredLanguage(lang.code);
+
+    // 2. Play TTS feedback
     if (!isAudioMuted) {
-      const audioInfo = LANGUAGE_AUDIO_FEEDBACK[lang.code];
-      speak(audioInfo?.chosen || `${lang.nameNative} चुनी गई`, lang.code);
+      speak(lang.ttsFeedback, lang.code);
     }
-  };
 
-  const handleProceed = () => {
-    if (!selectedLang) return;
-    setLanguage(selectedLang);
-    onSelectLanguage(selectedLang);
+    // 3. Auto-navigate to Role Selection
+    onSelectLanguage(lang.code);
   };
-
-  const proceedButtonText = selectedLang
-    ? LANGUAGE_AUDIO_FEEDBACK[selectedLang]?.proceed || 'आगे बढ़ें'
-    : 'आगे बढ़ें';
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-2.5 sm:p-6 md:p-8 select-none">
-      <div className="w-full max-w-4xl bg-white rounded-xl p-3.5 sm:p-8 md:p-10 shadow-sm border border-stone-200 flex flex-col space-y-4 sm:space-y-6">
-        {/* Brand Header */}
-        <div className="text-center space-y-1.5 sm:space-y-2">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-xl bg-[#B4431E] text-white flex items-center justify-center shadow-xs">
-            <Palette className="w-6 h-6 sm:w-7 sm:h-7" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
-              कारीगर <span className="text-xs sm:text-sm font-semibold text-stone-500">(Karighar)</span>
-            </h1>
-            <p className="text-xs sm:text-sm font-semibold text-[#B4431E] mt-0.5">
-              "हुनर से बाज़ार तक" · From Skill to Marketplace
-            </p>
-          </div>
+    <div className="min-h-screen bg-white flex flex-col justify-between p-4 sm:p-6 max-w-xl mx-auto font-sans">
+      <div className="space-y-6 pt-2">
+        {/* Top: App Wordmark & Tagline */}
+        <div className="flex flex-col items-center justify-center text-center space-y-1">
+          <KarigharWordmark size="md" align="center" />
+          <p className="text-sm font-semibold text-[#4B5563]">
+            हुनर से बाज़ार तक
+          </p>
         </div>
 
-        {/* Question with Audio Speaker Button */}
-        <div className="flex items-center justify-between gap-2.5 sm:gap-3 bg-stone-50 p-3 sm:p-4 rounded-lg border border-stone-200">
-          <div>
-            <h2 className="text-base sm:text-xl font-extrabold text-stone-900">
+        {/* Title & Voice Button */}
+        <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">
               अपनी भाषा चुनें
-            </h2>
-            <p className="text-[11px] sm:text-xs text-stone-600 font-medium">
-              Choose your regional language / உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்
+            </h1>
+            <p className="text-xs sm:text-sm text-[#6B7280] mt-0.5">
+              Choose your language
             </p>
           </div>
-          <AudioSpeakerButton
-            text="अपनी भाषा चुनें। Choose your language"
-            language="hi"
-            size="lg"
-            variant="primary"
-            title="अपनी भाषा चुनें सुनें"
-            id="speak-choose-language-btn"
-            className="shrink-0"
-          />
+
+          <button
+            type="button"
+            onClick={handleSpeakTitle}
+            id="btn-hear-describe-languages"
+            className="w-full sm:w-auto min-h-[48px] px-4 py-2.5 rounded-lg bg-white border border-[#E5E7EB] hover:border-[#FF6B35] hover:text-[#FF6B35] text-[#111827] text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shrink-0"
+          >
+            <Volume2 className="w-4 h-4 text-[#FF6B35]" />
+            <span>🔊 Hear me describe these</span>
+          </button>
         </div>
 
-        {/* Responsive Grid of Language Cards (2 on phone, 3 on tablet, 4 on desktop) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+        {/* 2-Column Grid of 12 Language Cards */}
+        <div id="language-grid" className="grid grid-cols-2 gap-3 sm:gap-3.5">
           {LANGUAGES.map((lang) => {
-            const isSelected = selectedLang === lang.code;
+            const isActive = selectedLang === lang.code;
             return (
-              <div
+              <button
+                type="button"
                 key={lang.code}
-                id={`lang-card-${lang.code}`}
-                onClick={() => handleCardClick(lang)}
-                className={`relative min-h-[84px] sm:min-h-[90px] p-2.5 sm:p-4 rounded-lg border-2 transition-all cursor-pointer flex flex-col justify-between group select-none ${
-                  isSelected
-                    ? 'border-[#B4431E] bg-amber-50/50 shadow-xs scale-[1.02]'
-                    : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50'
+                id={`btn-lang-${lang.code}`}
+                onClick={() => handleLanguageTap(lang)}
+                className={`w-full min-h-[68px] p-3.5 rounded-lg border-2 transition-all text-left flex items-center justify-between gap-2.5 cursor-pointer group ${
+                  isActive
+                    ? 'border-[#FF6B35] bg-[#FFF8F5]'
+                    : 'border-[#E5E7EB] bg-white hover:border-[#D1D5DB] hover:bg-[#F9FAFB]'
                 }`}
               >
-                {/* Header inside card: Script Badge & Audio button */}
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-[10px] uppercase font-bold px-1.5 sm:px-2 py-0.5 rounded-sm bg-stone-100 text-stone-700 truncate">
-                    {lang.scriptBadge}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <AudioSpeakerButton
-                      text={lang.hearPrompt}
-                      language={lang.code}
-                      size="sm"
-                      variant="card"
-                      title={`${lang.nameNative} सुनें`}
-                      id={`hear-lang-${lang.code}`}
-                    />
-                    {isSelected && (
-                      <CheckCircle2 className="w-5 h-5 text-[#B4431E] fill-amber-100 shrink-0" />
-                    )}
+                <div className="min-w-0 flex-1 flex flex-col justify-center">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-base sm:text-lg">{lang.flag}</span>
+                    <span
+                      className={`font-bold text-lg leading-tight transition-colors break-words ${
+                        isActive
+                          ? 'text-[#FF6B35]'
+                          : 'text-[#111827] group-hover:text-[#FF6B35]'
+                      }`}
+                    >
+                      {lang.native}
+                    </span>
                   </div>
-                </div>
-
-                {/* Language Name in Native Script & English */}
-                <div>
-                  <div
-                    className={`font-bold text-lg sm:text-xl leading-tight transition-colors ${
-                      isSelected ? 'text-[#B4431E]' : 'text-stone-900 group-hover:text-[#B4431E]'
+                  <span
+                    className={`text-xs sm:text-sm font-medium pl-6 ${
+                      isActive ? 'text-[#FF6B35]/80' : 'text-[#6B7280]'
                     }`}
                   >
-                    {lang.nameNative}
-                  </div>
-                  <div className="text-xs text-stone-500 font-medium">
-                    {lang.nameEnglish}
-                  </div>
+                    {lang.english}
+                  </span>
                 </div>
-              </div>
+
+                {/* Active checkmark indicator */}
+                <div
+                  className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                    isActive
+                      ? 'bg-[#FF6B35] text-white'
+                      : 'border-2 border-[#E5E7EB] group-hover:border-[#D1D5DB]'
+                  }`}
+                >
+                  {isActive && <Check className="w-3 h-3 stroke-[3]" />}
+                </div>
+              </button>
             );
           })}
         </div>
+      </div>
 
-        {/* Bottom Proceed Button */}
-        <div className="pt-2">
-          <button
-            type="button"
-            onClick={handleProceed}
-            disabled={!selectedLang}
-            id="proceed-language-btn"
-            className={`w-full min-h-[48px] h-12 rounded-lg font-bold text-base flex items-center justify-center gap-2 transition-all cursor-pointer ${
-              selectedLang
-                ? 'bg-[#B4431E] hover:bg-[#9E3514] text-white shadow-xs active:scale-[0.99]'
-                : 'bg-stone-200 text-stone-400 cursor-not-allowed shadow-none'
-            }`}
-          >
-            <span>{proceedButtonText}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+      {/* Clean footer notice */}
+      <div className="pt-6 pb-2 text-center text-xs text-[#6B7280]">
+        Voice input and audio assistance available in all languages
       </div>
     </div>
   );

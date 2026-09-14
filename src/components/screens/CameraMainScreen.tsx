@@ -1,7 +1,7 @@
 import React from 'react';
-import { Camera, FolderOpen, Users, Sparkles, ChevronRight, ArrowRight, ClipboardList, ShieldCheck } from 'lucide-react';
+import { Camera, FolderOpen, Users, Sparkles, ChevronRight, PlusCircle, Package } from 'lucide-react';
 import { Artist, Product, Language } from '../../types';
-import { useLanguage } from '../../context/LanguageContext';
+import { TRANSLATIONS } from '../../utils/translations';
 import { speak } from '../../utils/speech';
 
 interface CameraMainScreenProps {
@@ -27,7 +27,7 @@ export const CameraMainScreen: React.FC<CameraMainScreenProps> = ({
   onViewAllListings,
   isAudioMuted,
 }) => {
-  const { t } = useLanguage();
+  const t = TRANSLATIONS[language];
   const artistName = activeArtist?.name || 'Ramesh Kumar';
 
   const handleTakePhotoClick = () => {
@@ -45,155 +45,147 @@ export const CameraMainScreen: React.FC<CameraMainScreenProps> = ({
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 pb-20 select-none">
-      {/* Top Banner: Warm Artisanal Clay Aesthetic */}
-      <div className="bg-[#B4431E] rounded-xl p-5 sm:p-6 lg:p-8 text-white shadow-xs relative overflow-hidden">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4 pb-16">
+      {/* Artist Studio Bar */}
+      <div className="bg-stone-900 rounded-xl p-4 sm:p-5 text-stone-100 border border-stone-800 shadow-xs relative overflow-hidden">
+        <div className="relative z-10 flex items-start justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-xs font-bold mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-amber-200" />
-              <span>Voice & Guided AI Ready</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-stone-800 border border-stone-700 text-[11px] font-medium text-amber-300 mb-2">
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              <span>Voice-Guided AI Studio</span>
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight">
-              {t('newProduct')}: <span className="underline decoration-amber-300 underline-offset-4">{artistName}</span>
+            <h1 className="text-lg sm:text-xl font-bold leading-tight">
+              {t.newProduct} — <span>{artistName}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-amber-100 mt-1">
+            <p className="text-xs text-stone-400 mt-0.5">
               {activeArtist?.craft} · {activeArtist?.village}, {activeArtist?.district}
             </p>
           </div>
 
           <button
-            type="button"
             onClick={onSwitchArtist}
             id="camera-screen-switch-artist-btn"
-            className="min-h-[44px] flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-xs font-bold text-white transition-colors cursor-pointer self-start sm:self-center shrink-0"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 border border-stone-700 text-xs font-medium text-stone-200 transition-colors shadow-xs cursor-pointer shrink-0"
             title="Switch or add artists"
           >
-            <Users className="w-4 h-4" />
-            <span>Switch Artist</span>
+            <Users className="w-3.5 h-3.5" />
+            <span>Switch Profile</span>
           </button>
         </div>
       </div>
 
       {/* Two Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        {/* Take Photo Card (Primary) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Take Photo (Primary Action) */}
         <button
-          type="button"
           onClick={handleTakePhotoClick}
           id="camera-take-photo-btn"
-          className="p-6 sm:p-8 rounded-xl bg-white hover:bg-amber-50/20 border-2 border-[#B4431E] shadow-xs text-left transition-all group cursor-pointer relative flex flex-col justify-between"
+          className="p-5 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 hover:border-stone-900 shadow-xs text-left transition-colors group cursor-pointer"
         >
-          <div>
-            <div className="w-12 h-12 rounded-lg bg-[#B4431E]/10 text-[#B4431E] flex items-center justify-center mb-4 group-hover:bg-[#B4431E] group-hover:text-white transition-colors">
-              <Camera className="w-6 h-6" />
-            </div>
-            <span className="inline-block text-[10px] font-extrabold text-[#B4431E] uppercase tracking-wider bg-amber-50 px-2 py-0.5 rounded-sm mb-2 border border-amber-200">
-              Recommended
-            </span>
-            <h2 className="text-lg sm:text-xl font-bold text-stone-900 group-hover:text-[#B4431E] transition-colors">
-              {t('takePhoto')}
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-600 mt-1.5 leading-relaxed">
-              {t('takePhotoDesc')} (Front, 45° Angle, Top View).
-            </p>
+          <div className="w-10 h-10 rounded-lg bg-stone-900 text-white flex items-center justify-center mb-3">
+            <Camera className="w-5 h-5" />
           </div>
+          <span className="inline-block text-[10px] font-semibold text-stone-700 uppercase tracking-wider bg-stone-100 px-2 py-0.5 rounded border border-stone-200 mb-1.5">
+            Recommended
+          </span>
+          <h2 className="text-base sm:text-lg font-bold text-stone-900">
+            {t.takePhoto}
+          </h2>
+          <p className="text-xs text-stone-500 mt-0.5 leading-relaxed">
+            {t.takePhotoDesc} (Front, 45° Angle, Top View).
+          </p>
 
-          <div className="mt-6 flex items-center gap-2 text-xs font-bold text-[#B4431E]">
-            <span>Start Guided Camera</span>
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-stone-900">
+            <span>Start Guided Capture</span>
+            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </div>
         </button>
 
-        {/* Upload Gallery Card (Secondary) */}
+        {/* Upload from Gallery (Secondary Action) */}
         <button
-          type="button"
           onClick={handleUploadClick}
           id="camera-upload-gallery-btn"
-          className="p-6 sm:p-8 rounded-xl bg-white hover:bg-stone-50 border border-stone-200 shadow-xs text-left transition-all group cursor-pointer flex flex-col justify-between"
+          className="p-5 rounded-xl bg-white hover:bg-stone-50 border border-stone-200 hover:border-stone-400 shadow-xs text-left transition-colors group cursor-pointer"
         >
-          <div>
-            <div className="w-12 h-12 rounded-lg bg-stone-100 text-stone-700 flex items-center justify-center mb-4 group-hover:bg-stone-200 transition-colors">
-              <FolderOpen className="w-6 h-6" />
-            </div>
-            <span className="inline-block text-[10px] font-extrabold text-stone-500 uppercase tracking-wider bg-stone-100 px-2 py-0.5 rounded-sm mb-2 border border-stone-200">
-              Quick Upload
-            </span>
-            <h2 className="text-lg sm:text-xl font-bold text-stone-900 group-hover:text-stone-700 transition-colors">
-              {t('uploadGallery')}
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-600 mt-1.5 leading-relaxed">
-              {t('uploadGalleryDesc')} or select existing craft photos from device.
-            </p>
+          <div className="w-10 h-10 rounded-lg bg-stone-100 text-stone-800 flex items-center justify-center mb-3 border border-stone-200">
+            <FolderOpen className="w-5 h-5 text-stone-700" />
           </div>
+          <span className="inline-block text-[10px] font-semibold text-stone-600 uppercase tracking-wider bg-stone-100 px-2 py-0.5 rounded border border-stone-200 mb-1.5">
+            Quick Upload
+          </span>
+          <h2 className="text-base sm:text-lg font-bold text-stone-900">
+            {t.uploadGallery}
+          </h2>
+          <p className="text-xs text-stone-500 mt-0.5 leading-relaxed">
+            {t.uploadGalleryDesc} or test with verified sample artisan photos.
+          </p>
 
-          <div className="mt-6 flex items-center gap-2 text-xs font-bold text-stone-700">
+          <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-stone-700">
             <span>Select Existing Photos</span>
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </div>
         </button>
       </div>
 
       {/* Recent Listings Section */}
-      <div className="bg-white rounded-xl p-5 sm:p-6 border border-stone-200 shadow-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-          <div className="flex items-center gap-2">
-            <ClipboardList className="w-5 h-5 text-stone-700" />
-            <div>
-              <h3 className="font-bold text-base sm:text-lg text-stone-900 leading-none">
-                {t('recentListings')} ({recentProducts.length})
-              </h3>
-              <p className="text-xs text-stone-500 mt-0.5">
-                Live crafts currently listed for sale on the buyer marketplace
-              </p>
-            </div>
+      <div className="bg-white rounded-xl p-4 sm:p-5 border border-stone-200 shadow-xs">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="font-bold text-sm sm:text-base text-stone-900 flex items-center gap-2">
+              <Package className="w-4 h-4 text-stone-700" />
+              <span>{t.recentListings}</span>
+              <span className="text-xs font-normal text-stone-500">
+                ({recentProducts.length} published)
+              </span>
+            </h3>
+            <p className="text-xs text-stone-500">
+              Live products actively visible to buyers across India
+            </p>
           </div>
-
           <button
-            type="button"
             onClick={onViewAllListings}
-            className="text-xs font-bold text-[#B4431E] hover:underline cursor-pointer"
+            className="text-xs font-semibold text-stone-700 hover:text-stone-900 transition-colors"
           >
             View All →
           </button>
         </div>
 
         {recentProducts.length === 0 ? (
-          <div className="text-center py-10 bg-stone-50 rounded-lg border border-dashed border-stone-200">
-            <p className="text-xs text-stone-500 font-medium">No crafts listed yet.</p>
-            <p className="text-xs text-[#B4431E] font-bold mt-1">
-              Take your first photo above to publish directly to buyers!
+          <div className="text-center py-6 bg-stone-50 rounded-lg border border-dashed border-stone-200">
+            <p className="text-xs text-stone-500">No products published yet.</p>
+            <p className="text-xs text-stone-700 mt-0.5 font-medium">
+              Take your first photo above to start!
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {recentProducts.slice(0, 3).map((product) => (
               <div
                 key={product.id}
                 onClick={() => onViewProduct(product)}
                 id={`recent-prod-${product.id}`}
-                className="rounded-lg border border-stone-200 p-3 hover:border-[#B4431E] transition-all cursor-pointer bg-white group flex sm:flex-col items-center sm:items-start gap-3 shadow-2xs hover:shadow-xs"
+                className="rounded-lg border border-stone-200 p-2.5 hover:border-stone-400 hover:shadow-xs transition-colors cursor-pointer bg-white group flex sm:flex-col items-center sm:items-start gap-2.5"
               >
-                <div className="w-20 h-20 sm:w-full sm:h-36 rounded-md overflow-hidden bg-stone-100 shrink-0">
+                <div className="w-16 h-16 sm:w-full sm:h-32 rounded-md overflow-hidden bg-stone-100 shrink-0 border border-stone-200">
                   <img
-                    src={product.image || product.imagePaths?.[0]}
+                    src={product.imagePaths[0]}
                     alt={product.title}
                     className="w-full h-full object-cover group-hover:scale-102 transition-transform"
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <div className="min-w-0 flex-1 w-full">
-                  <span className="text-[10px] font-bold uppercase text-[#B4431E] bg-amber-50 px-2 py-0.5 rounded-xs border border-amber-100">
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] font-medium uppercase text-stone-600 bg-stone-100 px-1.5 py-0.2 rounded border border-stone-200">
                     {product.category}
                   </span>
-                  <h4 className="font-bold text-sm text-stone-900 truncate mt-1 group-hover:text-[#B4431E] transition-colors">
+                  <h4 className="font-bold text-xs sm:text-sm text-stone-900 truncate mt-1">
                     {product.title}
                   </h4>
-                  <div className="flex items-center justify-between mt-1 pt-1 border-t border-stone-100">
-                    <span className="text-sm font-extrabold text-[#007600]">
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-sm font-bold text-stone-900">
                       ₹{product.price}
                     </span>
-                    <span className="text-[11px] text-stone-500 font-medium">
+                    <span className="text-[10px] text-stone-500">
                       Stock: {product.stock || 5}
                     </span>
                   </div>
@@ -206,3 +198,4 @@ export const CameraMainScreen: React.FC<CameraMainScreenProps> = ({
     </div>
   );
 };
+

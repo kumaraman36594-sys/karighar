@@ -1,6 +1,18 @@
 export type UserRole = 'seller' | 'buyer';
 
-export type Language = 'hi' | 'en' | 'ta' | 'te' | 'bn' | 'mr' | 'gu' | 'kn';
+export type Language = 
+  | 'hi' 
+  | 'en' 
+  | 'ta' 
+  | 'te' 
+  | 'bn' 
+  | 'mr' 
+  | 'gu' 
+  | 'kn' 
+  | 'mai' 
+  | 'bho' 
+  | 'or' 
+  | 'pa';
 
 export type CraftType = 
   | 'Pottery'
