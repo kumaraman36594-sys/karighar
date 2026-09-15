@@ -162,6 +162,23 @@ export const saveProduct = (product: Product): Product[] => {
   return products;
 };
 
+export const deleteProduct = (productId: string): Product[] => {
+  const products = getStoredProducts().filter((product) => product.id !== productId);
+  setJson(STORAGE_KEYS.PRODUCTS, products);
+
+  const artists = getStoredArtists();
+  artists.forEach((artist) => {
+    if (artist.productIds.includes(productId)) {
+      saveArtist({
+        ...artist,
+        productIds: artist.productIds.filter((id) => id !== productId),
+      });
+    }
+  });
+
+  return products;
+};
+
 export const getStoredTokens = (): TokenTransaction[] => {
   const tokens = getJson<TokenTransaction[]>(STORAGE_KEYS.TOKENS, INITIAL_TOKENS);
   if (!Array.isArray(tokens) || tokens.length === 0) {
@@ -299,6 +316,7 @@ export const StorageService = {
   deleteArtist,
   getProducts: getStoredProducts,
   saveProduct,
+  deleteProduct,
   getGuestProducts: getStoredGuestProducts,
   saveGuestProduct,
   getCart: getStoredCart,

@@ -93,8 +93,13 @@ export interface Product {
   reviewCount?: number;
   priceRange?: [number, number];
   region?: string;
-  status?: 'draft' | 'published';
+  status?: 'draft' | 'published' | 'sold' | 'out_of_stock' | 'pending_review';
+  views?: number;
+  inquiries?: number;
+  orders?: number;
+  revenue?: number;
   createdAt: string;
+  updatedAt?: string;
   dimensions?: string;
   makingTime?: string;
   stock?: number;
