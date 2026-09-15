@@ -110,7 +110,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
             }`}
           >
             <Rotate3d className={`w-3.5 h-3.5 ${is3dMode ? 'animate-spin' : ''}`} />
-            <span>{is3dMode ? '3D Active' : '3D View'}</span>
+            <span>3D Active</span>
           </button>
 
           {/* Dots indicator */}
@@ -298,4 +298,3 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
     </div>
   );
 };
-
