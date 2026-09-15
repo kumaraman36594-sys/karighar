@@ -29,6 +29,7 @@ interface NavigationProps {
   onTabChange?: (tab: string) => void;
   tokenCount?: number;
   isTabletOrDesktop?: boolean;
+  isGuest?: boolean;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
@@ -42,6 +43,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   onTabChange,
   tokenCount,
   isTabletOrDesktop = false,
+  isGuest = false,
 }) => {
   const activeRole = currentRole || role;
   const activeLang = currentLanguage || language;
@@ -56,12 +58,16 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   const currentActive = currentScreen || (activeTab as ScreenName) || 'camera_main';
 
+  const guestSellerItems: NavItem[] = [
+    { id: 'camera_main', label: 'Home', icon: Camera, isPrimary: true },
+    { id: 'profile', label: 'Profile', icon: User },
+  ];
+
   const sellerItems: NavItem[] = [
-    { id: 'artist_switcher', label: t?.myArtists || 'कारीगर', icon: Users },
-    { id: 'camera_main', label: t?.camera || 'कैमरा', icon: Camera, isPrimary: true },
-    { id: 'my_listings', label: t?.listings || 'उत्पाद', icon: ListOrdered },
-    { id: 'token_dashboard', label: t?.tokens || 'टोकन', icon: Coins },
-    { id: 'profile', label: t?.profile || 'प्रोफ़ाइल', icon: User },
+    { id: 'camera_main', label: 'Home', icon: Camera, isPrimary: true },
+    { id: 'my_listings', label: 'Products', icon: ListOrdered },
+    { id: 'tokens', label: 'Tokens', icon: Coins },
+    { id: 'profile', label: 'Profile', icon: User },
   ];
 
   const buyerItems: NavItem[] = [
@@ -69,7 +75,7 @@ export const Navigation: React.FC<NavigationProps> = ({
     { id: 'profile', label: t?.profile || 'प्रोफ़ाइल', icon: User },
   ];
 
-  const items = activeRole === 'seller' ? sellerItems : buyerItems;
+  const items = activeRole === 'seller' ? (isGuest ? guestSellerItems : sellerItems) : buyerItems;
 
   // Render Side Navigation Rail for Tablet / Laptop
   return (

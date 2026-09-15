@@ -19,6 +19,7 @@ const STORAGE_KEYS = {
   SESSION: 'artisan_user_session',
   ARTISTS: 'artisan_artists',
   PRODUCTS: 'artisan_products',
+  GUEST_PRODUCTS: 'karighar_guest_products',
   TOKENS: 'artisan_tokens',
   INQUIRIES: 'artisan_inquiries',
   ORDERS: 'artisan_orders',
@@ -70,7 +71,7 @@ export const setStoredSession = (session: UserSession | null): void => {
 export const getStoredLanguage = (): Language => {
   if (typeof window === 'undefined') return 'hi';
   const stored = (localStorage.getItem(STORAGE_KEYS.LANGUAGE) || localStorage.getItem(STORAGE_KEYS.ALT_LANGUAGE)) as Language;
-  if (stored && ['hi', 'en', 'ta', 'te', 'bn', 'mr', 'gu', 'kn'].includes(stored)) {
+  if (stored && ['hi', 'en', 'ta', 'te', 'bn', 'mr', 'gu', 'kn', 'mai', 'bho', 'or', 'pa'].includes(stored)) {
     return stored;
   }
   return 'hi';
@@ -121,6 +122,23 @@ export const getStoredProducts = (): Product[] => {
     setJson(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
     return INITIAL_PRODUCTS;
   }
+  return products;
+};
+
+export const getStoredGuestProducts = (): Product[] => {
+  const products = getJson<Product[]>(STORAGE_KEYS.GUEST_PRODUCTS, []);
+  return Array.isArray(products) ? products : [];
+};
+
+export const saveGuestProduct = (product: Product): Product[] => {
+  const products = getStoredGuestProducts();
+  const index = products.findIndex((item) => item.id === product.id);
+  if (index >= 0) {
+    products[index] = product;
+  } else {
+    products.unshift(product);
+  }
+  setJson(STORAGE_KEYS.GUEST_PRODUCTS, products);
   return products;
 };
 
@@ -241,24 +259,21 @@ export const resetAllData = (): void => {
   localStorage.clear();
   setJson(STORAGE_KEYS.ARTISTS, INITIAL_ARTISTS);
   setJson(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+  setJson(STORAGE_KEYS.GUEST_PRODUCTS, []);
   setJson(STORAGE_KEYS.TOKENS, INITIAL_TOKENS);
   setJson(STORAGE_KEYS.CART, []);
 };
 
 export const DEFAULT_SESSION = {
+  accessMode: 'guest' as const,
   role: 'seller' as 'seller' | 'buyer',
-  activeArtistId: 'artist-1',
   hasCompletedOnboarding: false,
   hasSelectedLanguage: false,
   language: 'hi' as Language,
   isAudioMuted: false,
-  tokenBalance: 245,
-  referralCode: 'KARIGHAR-RAMESH-123',
-  referredBy: undefined as string | undefined,
-  referralTier: 1, // Silver
-  referralCount: 7,
-  totalTokens: 245,
-  mobileNumber: '+91 98765 43210',
+  tokenBalance: 0,
+  totalTokens: 0,
+  referralCount: 0,
 };
 
 export const StorageService = {
@@ -266,7 +281,12 @@ export const StorageService = {
     const raw = getJson<any>(STORAGE_KEYS.SESSION, null);
     const storedLang = getStoredLanguage();
     if (!raw) return { ...DEFAULT_SESSION, language: storedLang };
-    return { ...DEFAULT_SESSION, ...raw, language: raw.language || storedLang };
+    return {
+      ...DEFAULT_SESSION,
+      ...raw,
+      accessMode: raw.accessMode || (raw.userId || raw.loginTime ? 'authenticated' : 'guest'),
+      language: raw.language || storedLang,
+    };
   },
   saveSession: (session: any) => {
     if (session?.language && typeof window !== 'undefined') {
@@ -279,6 +299,8 @@ export const StorageService = {
   deleteArtist,
   getProducts: getStoredProducts,
   saveProduct,
+  getGuestProducts: getStoredGuestProducts,
+  saveGuestProduct,
   getCart: getStoredCart,
   saveCart,
   getOrders: getStoredOrders,
@@ -292,4 +314,3 @@ export const StorageService = {
   },
   resetToDefaults: resetAllData,
 };
-

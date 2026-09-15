@@ -1,4 +1,5 @@
 export type UserRole = 'seller' | 'buyer';
+export type AccessMode = 'guest' | 'authenticated';
 
 export type Language = 
   | 'hi' 
@@ -25,6 +26,7 @@ export type CraftType =
 
 export interface UserSession {
   userId?: string;
+  accessMode: AccessMode;
   role: UserRole;
   activeArtistId?: string;
   token?: string;
@@ -232,4 +234,3 @@ export type ScreenName =
   | 'referral_dashboard'
   | 'my_listings'
   | 'profile';
-

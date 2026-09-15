@@ -19,6 +19,10 @@ const DICTIONARIES: Record<Language, Record<string, string>> = {
   mr,
   gu,
   kn,
+  mai: hi,
+  bho: hi,
+  or: hi,
+  pa: hi,
 };
 
 const STORAGE_KEY = 'karighar_language';

@@ -1,4 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import { 
   UserRole, 
   Language, 
@@ -45,6 +46,7 @@ import { ArtistSwitcherScreen } from './components/screens/ArtistSwitcherScreen'
 import { TokenDashboardScreen } from './components/screens/TokenDashboardScreen';
 import { ReferralDashboardScreen } from './components/screens/ReferralDashboardScreen';
 import { ProfileScreen } from './components/screens/ProfileScreen';
+import { SellerGuestProfileScreen } from './components/screens/SellerGuestProfileScreen';
 import { MyListingsScreen } from './components/screens/MyListingsScreen';
 
 // Modals
@@ -83,8 +85,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-md w-full p-6 border border-stone-200 rounded-xl space-y-4 shadow-sm">
-            <div className="text-3xl">⚠️</div>
+          <div className="max-w-md w-full p-6 border border-[#E5E7EB] rounded-lg space-y-4">
+            <AlertTriangle className="mx-auto h-8 w-8 text-[#EF4444]" aria-hidden="true" />
             <h2 className="text-lg font-bold text-stone-900">
               कुछ गलत हो गया / Something went wrong
             </h2>
@@ -94,7 +96,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <button
               type="button"
               onClick={this.handleReset}
-              className="w-full min-h-[48px] rounded-lg bg-stone-900 text-white text-sm font-semibold hover:bg-black transition-colors"
+              className="w-full min-h-[56px] rounded-lg bg-[#FF6B35] text-white text-base font-semibold hover:bg-[#E85D2A] transition-colors"
             >
               रीसेट करें और पुनः प्रयास करें (Reset & Reload)
             </button>
@@ -117,6 +119,7 @@ export default function App() {
     const list = StorageService.getProducts();
     return Array.isArray(list) && list.length > 0 ? list : MOCK_PRODUCTS;
   });
+  const [guestProducts, setGuestProducts] = useState<Product[]>(() => StorageService.getGuestProducts());
   const [transactions, setTransactions] = useState<TokenTransaction[]>(() => {
     const list = StorageService.getTransactions();
     return Array.isArray(list) ? list : [];
@@ -128,12 +131,8 @@ export default function App() {
   // Navigation State: Show Language Selection first for new users
   const [currentScreen, setCurrentScreen] = useState<ScreenName>(() => {
     const sess = StorageService.getSession();
-    if (!sess?.hasSelectedLanguage) {
-      return 'language_select';
-    }
-    if (!sess?.hasCompletedOnboarding) {
-      return 'role_select';
-    }
+    if (!sess?.hasSelectedLanguage) return 'language_select';
+    if (!sess?.hasCompletedOnboarding) return 'role_select';
     return sess.role === 'buyer' ? 'marketplace' : 'camera_main';
   });
   const [activeTab, setActiveTab] = useState<string>('camera');
@@ -157,9 +156,9 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<string>('');
 
   // Active Artist
-  const activeArtist = (Array.isArray(artists) ? artists.find(a => a?.id === session?.activeArtistId) : undefined) 
-    || artists?.[0] 
-    || INITIAL_ARTISTS[0];
+  const activeArtist = session.accessMode === 'authenticated'
+    ? ((Array.isArray(artists) ? artists.find(a => a?.id === session?.activeArtistId) : undefined) || artists?.[0] || INITIAL_ARTISTS[0])
+    : undefined;
 
   const getArtistForProduct = (artistId?: string) => {
     if (!artistId || !Array.isArray(artists)) return activeArtist;
@@ -196,6 +195,7 @@ export default function App() {
 
   // 1b. Language Select handler
   const handleSelectLanguage = (lang: Language) => {
+    console.log('Button clicked:', `language-${lang}`);
     setStoredLanguage(lang);
     updateSession({ language: lang, hasSelectedLanguage: true });
     if (!session.hasCompletedOnboarding) {
@@ -211,13 +211,14 @@ export default function App() {
 
   // 2. Role Select handler
   const handleSelectRole = (role: UserRole) => {
-    updateSession({ role });
+    console.log('Button clicked:', `role-${role}`);
+    updateSession({ role, hasCompletedOnboarding: true, accessMode: 'guest' });
     if (role === 'buyer') {
-      updateSession({ hasCompletedOnboarding: true });
       setCurrentScreen('marketplace');
       setActiveTab('marketplace');
     } else {
-      setCurrentScreen('seller_login');
+      setCurrentScreen('camera_main');
+      setActiveTab('camera');
     }
   };
 
@@ -229,7 +230,7 @@ export default function App() {
 
   // 4. OTP verified
   const handleOtpVerified = () => {
-    updateSession({ mobileNumber: tempMobile });
+    updateSession({ mobileNumber: tempMobile, accessMode: 'authenticated' });
     // If no artist created yet or onboarding incomplete, prompt referral code first
     if (!session.hasCompletedOnboarding) {
       setCurrentScreen('referral_entry');
@@ -356,10 +357,16 @@ export default function App() {
 
   // 9. Approve & Publish
   const handleApprovePublish = (approvedProduct: Product) => {
+    if (session.accessMode === 'guest') {
+      setGuestProducts(StorageService.saveGuestProduct(approvedProduct));
+      setPendingProduct(approvedProduct);
+      setCurrentScreen('success');
+      return;
+    }
+
     const updatedProducts = StorageService.saveProduct(approvedProduct);
     setProducts(updatedProducts);
 
-    // Update artist product list
     if (activeArtist) {
       const updatedArtist = {
         ...activeArtist,
@@ -368,7 +375,6 @@ export default function App() {
       setArtists(StorageService.saveArtist(updatedArtist));
     }
 
-    // Award +5 tokens for completing artist listing (photo + voice)
     const nextBal = (session.tokenBalance || 245) + 5;
     updateSession({ tokenBalance: nextBal, totalTokens: (session.totalTokens || 245) + 5 });
     const newTx: TokenTransaction = {
@@ -429,10 +435,11 @@ export default function App() {
 
   // 12. Switch tab from navigation
   const handleTabChange = (tabId: string) => {
+    console.log('Button clicked:', `tab-${tabId}`);
     setActiveTab(tabId);
-    if (tabId === 'camera') setCurrentScreen('camera_main');
-    else if (tabId === 'marketplace') setCurrentScreen('marketplace');
-    else if (tabId === 'listings') setCurrentScreen('my_listings');
+    if (tabId === 'camera' || tabId === 'camera_main') setCurrentScreen('camera_main');
+    else if (tabId === 'marketplace' || tabId === 'buyer_home') setCurrentScreen('marketplace');
+    else if (tabId === 'listings' || tabId === 'my_listings') setCurrentScreen('my_listings');
     else if (tabId === 'tokens') setCurrentScreen('tokens');
     else if (tabId === 'my-artists') setCurrentScreen('artist_switcher');
     else if (tabId === 'profile') setCurrentScreen('profile');
@@ -445,8 +452,9 @@ export default function App() {
       setSession(StorageService.getSession());
       setArtists(StorageService.getArtists());
       setProducts(StorageService.getProducts());
+      setGuestProducts(StorageService.getGuestProducts());
       setTransactions(StorageService.getTransactions());
-      setCurrentScreen('role_select');
+      setCurrentScreen('language_select');
       showToast('Demo data reset successfully!');
     }
   };
@@ -464,14 +472,14 @@ export default function App() {
   const getDeviceContainerClass = () => {
     switch (deviceMode) {
       case 'phone':
-        return 'max-w-[420px] mx-auto min-h-screen bg-white shadow-2xl border-x border-gray-300 relative';
+        return 'max-w-[420px] mx-auto min-h-screen bg-white border-x border-[#E5E7EB] relative';
       case 'tablet':
-        return 'max-w-[820px] mx-auto min-h-screen bg-white shadow-xl border-x border-gray-200 relative';
+        return 'max-w-[820px] mx-auto min-h-screen bg-white border-x border-[#E5E7EB] relative';
       case 'laptop':
-        return 'max-w-[1240px] mx-auto min-h-screen bg-[#f8f9fe]';
+        return 'max-w-[1240px] mx-auto min-h-screen bg-white';
       case 'auto':
       default:
-        return 'w-full min-h-screen bg-[#f8f9fe]';
+        return 'w-full min-h-screen bg-white';
     }
   };
 
@@ -728,6 +736,23 @@ export default function App() {
         );
 
       case 'profile':
+        if (session.accessMode === 'guest' && session.role === 'seller') {
+          return (
+            <SellerGuestProfileScreen
+              language={session.language}
+              isAudioMuted={Boolean(session.isAudioMuted)}
+              onLogin={() => {
+                console.log('Button clicked:', 'guest-profile-login');
+                setCurrentScreen('seller_login');
+              }}
+              onChangeLanguage={() => {
+                console.log('Button clicked:', 'guest-profile-language');
+                setCurrentScreen('language_select');
+              }}
+            />
+          );
+        }
+
         return (
           <ProfileScreen
             role={session.role}
@@ -783,22 +808,34 @@ export default function App() {
         return (
           <CameraMainScreen
             activeArtist={activeArtist}
-            recentProducts={products.filter(p => p.artistId === activeArtist?.id || p.artistId === 'artist-1')}
+            recentProducts={session.accessMode === 'guest' ? guestProducts : products.filter(p => p.artistId === activeArtist?.id || p.artistId === 'artist-1')}
+            allProducts={products}
+            artists={artists}
             language={session.language}
-            isAudioMuted={session.isAudioMuted}
-            onTakePhoto={() => setCurrentScreen('camera_capture')}
+            isAudioMuted={Boolean(session.isAudioMuted)}
+            isGuest={session.accessMode === 'guest' && session.role === 'seller'}
+            onTakePhoto={() => {
+              console.log('Button clicked:', 'camera-capture-start');
+              setCurrentScreen('camera_capture');
+            }}
             onUploadFromGallery={() => {
+              console.log('Button clicked:', 'gallery-upload-start');
               setCapturedPhotos(SAMPLE_CAPTURE_PREVIEWS.map(s => s.url));
               setCurrentScreen('ai_processing');
             }}
             onSwitchArtist={() => setCurrentScreen('artist_switcher')}
+            onOpenProfile={() => {
+              console.log('Button clicked:', 'seller-home-profile');
+              setCurrentScreen('profile');
+              setActiveTab('profile');
+            }}
             onViewProduct={(prod) => {
               setSelectedProduct(prod);
               setCurrentScreen('product_detail');
             }}
             onViewAllListings={() => {
               setCurrentScreen('my_listings');
-              setActiveTab('listings');
+              setActiveTab('my_listings');
             }}
           />
         );
@@ -821,12 +858,11 @@ export default function App() {
   const shouldShowChrome = !hideChromeScreens.includes(currentScreen);
 
   return (
-    <div className="min-h-screen bg-[#f1f3f9] text-gray-900 font-sans">
+    <div className="min-h-screen bg-white text-[#111827] font-sans">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 animate-fade-in">
-          <div className="bg-gray-900/95 text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs sm:text-sm font-semibold flex items-center gap-2 border border-white/10 backdrop-blur-md">
-            <span>✨</span>
+          <div className="bg-[#111827] text-white px-4 py-3 rounded-lg text-sm font-semibold flex items-center gap-2 border border-[#374151]">
             <span>{toastMessage}</span>
           </div>
         </div>
@@ -834,7 +870,7 @@ export default function App() {
 
       {/* Frame Container */}
       <div className={getDeviceContainerClass()}>
-        {shouldShowChrome && (
+        {shouldShowChrome && !(session.accessMode === 'guest' && session.role === 'seller') && (
           <Header
             role={session.role}
             language={session.language}
@@ -872,6 +908,7 @@ export default function App() {
               language={session.language}
               onTabChange={handleTabChange}
               tokenCount={session.tokenBalance}
+              isGuest={session.accessMode === 'guest' && session.role === 'seller'}
             />
           )}
 
