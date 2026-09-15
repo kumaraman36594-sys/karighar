@@ -8,7 +8,7 @@ import {
   ShoppingBag,
   Sparkles
 } from 'lucide-react';
-import { ScreenName, UserRole, Language } from '../../types';
+import { DeviceMode, ScreenName, UserRole, Language } from '../../types';
 import { TRANSLATIONS } from '../../utils/translations';
 
 interface NavItem {
@@ -30,6 +30,7 @@ interface NavigationProps {
   tokenCount?: number;
   isTabletOrDesktop?: boolean;
   isGuest?: boolean;
+  deviceMode?: DeviceMode;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
@@ -44,8 +45,10 @@ export const Navigation: React.FC<NavigationProps> = ({
   tokenCount,
   isTabletOrDesktop = false,
   isGuest = false,
+  deviceMode = 'auto',
 }) => {
   const activeRole = currentRole || role;
+  const isPhonePreview = deviceMode === 'phone';
   const activeLang = currentLanguage || language;
   const t = TRANSLATIONS[activeLang];
 
@@ -81,7 +84,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   return (
     <>
       {/* Desktop/Tablet Side Rail */}
-      <aside className="hidden md:flex w-20 lg:w-60 bg-white border-r border-stone-200 flex-col justify-between py-5 px-3 shrink-0 min-h-[calc(100vh-57px)]">
+      <aside className={`${isPhonePreview ? 'hidden' : 'hidden md:flex'} w-20 lg:w-60 bg-white border-r border-stone-200 flex-col justify-between py-5 px-3 shrink-0 min-h-[calc(100vh-57px)]`}>
         <div className="space-y-5">
           {/* Section title */}
           <div className="hidden lg:block px-3">
@@ -139,7 +142,7 @@ export const Navigation: React.FC<NavigationProps> = ({
       </aside>
 
       {/* Mobile Phone (<768px) Bottom Navigation Bar (56px min height) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 px-2 py-1 shadow-xs safe-area-bottom">
+      <nav className={`${isPhonePreview ? 'flex left-1/2 right-auto w-full max-w-[420px] -translate-x-1/2' : 'flex md:hidden left-0 right-0'} fixed bottom-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 px-2 py-1 shadow-xs safe-area-bottom`}>
         <div className="max-w-md mx-auto flex items-center justify-around h-[58px]">
           {items.map((item) => {
             const Icon = item.icon;

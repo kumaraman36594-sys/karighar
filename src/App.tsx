@@ -842,6 +842,8 @@ export default function App() {
     }
   };
 
+  const isPhonePreview = deviceMode === 'phone';
+
   // Determine if top header & navigation should be shown
   const hideChromeScreens: ScreenName[] = [
     'splash', 
@@ -900,19 +902,21 @@ export default function App() {
         )}
 
         {/* Layout with Side Navigation for Tablet/Laptop and Bottom Bar for Phone */}
-        <div className={shouldShowChrome ? 'flex flex-col md:flex-row' : ''}>
+        <div className={shouldShowChrome ? (isPhonePreview ? 'flex flex-col' : 'flex flex-col md:flex-row') : ''}>
           {shouldShowChrome && (
             <Navigation
+              currentScreen={currentScreen}
               role={session.role}
               activeTab={activeTab}
               language={session.language}
               onTabChange={handleTabChange}
               tokenCount={session.tokenBalance}
               isGuest={session.accessMode === 'guest' && session.role === 'seller'}
+              deviceMode={deviceMode}
             />
           )}
 
-          <main className={`flex-1 ${shouldShowChrome ? 'p-3 sm:p-6' : ''}`}>
+          <main className={`flex-1 ${shouldShowChrome ? (isPhonePreview ? 'p-3' : 'p-3 sm:p-6') : ''}`}>
             {renderCurrentScreen()}
           </main>
         </div>
