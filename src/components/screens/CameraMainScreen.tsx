@@ -1,201 +1,207 @@
 import React from 'react';
-import { Camera, FolderOpen, Users, Sparkles, ChevronRight, PlusCircle, Package } from 'lucide-react';
-import { Artist, Product, Language } from '../../types';
-import { TRANSLATIONS } from '../../utils/translations';
+import { Camera, ChevronRight, FolderOpen, Image as ImageIcon, Package, UserRound, Users } from 'lucide-react';
+import { Artist, Language, Product } from '../../types';
 import { speak } from '../../utils/speech';
 
 interface CameraMainScreenProps {
   activeArtist?: Artist;
   recentProducts: Product[];
+  allProducts?: Product[];
+  artists?: Artist[];
   language: Language;
   onTakePhoto: () => void;
   onUploadFromGallery: () => void;
   onSwitchArtist: () => void;
+  onOpenProfile?: () => void;
   onViewProduct: (product: Product) => void;
   onViewAllListings: () => void;
   isAudioMuted: boolean;
+  isGuest?: boolean;
 }
+
+const FALLBACK_EARNINGS = [12400, 8500, 6200];
 
 export const CameraMainScreen: React.FC<CameraMainScreenProps> = ({
   activeArtist,
   recentProducts,
+  allProducts = [],
+  artists = [],
   language,
   onTakePhoto,
   onUploadFromGallery,
   onSwitchArtist,
+  onOpenProfile,
   onViewProduct,
   onViewAllListings,
   isAudioMuted,
+  isGuest = false,
 }) => {
-  const t = TRANSLATIONS[language];
-  const artistName = activeArtist?.name || 'Ramesh Kumar';
+  const listings = Array.isArray(allProducts) ? allProducts : [];
+  const recent = Array.isArray(recentProducts) ? recentProducts : [];
+  const topArtisans = [...artists]
+    .sort((a, b) => (b.totalEarned || 0) - (a.totalEarned || 0))
+    .slice(0, 3);
 
   const handleTakePhotoClick = () => {
-    if (!isAudioMuted) {
-      speak('कैमरा शुरू हो रहा है। उत्पाद को ठीक बीच में रखें।', language);
-    }
+    console.log('Button clicked:', 'guest-camera-open');
+    if (!isAudioMuted) speak('अपना उत्पाद दिखाएं। उत्पाद को बीच में रखें।', language);
     onTakePhoto();
   };
 
   const handleUploadClick = () => {
-    if (!isAudioMuted) {
-      speak('कृपया अपने फोन से 3 फोटो चुनें।', language);
-    }
+    console.log('Button clicked:', 'guest-gallery-open');
+    if (!isAudioMuted) speak('गैलरी से अपने उत्पाद की फोटो चुनें।', language);
     onUploadFromGallery();
   };
 
   return (
-    <div className="space-y-4 pb-16">
-      {/* Artist Studio Bar */}
-      <div className="bg-stone-900 rounded-xl p-4 sm:p-5 text-stone-100 border border-stone-800 shadow-xs relative overflow-hidden">
-        <div className="relative z-10 flex items-start justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-stone-800 border border-stone-700 text-[11px] font-medium text-amber-300 mb-2">
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              <span>Voice-Guided AI Studio</span>
-            </div>
-            <h1 className="text-lg sm:text-xl font-bold leading-tight">
-              {t.newProduct} — <span>{artistName}</span>
-            </h1>
-            <p className="text-xs text-stone-400 mt-0.5">
-              {activeArtist?.craft} · {activeArtist?.village}, {activeArtist?.district}
-            </p>
-          </div>
-
-          <button
-            onClick={onSwitchArtist}
-            id="camera-screen-switch-artist-btn"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 border border-stone-700 text-xs font-medium text-stone-200 transition-colors shadow-xs cursor-pointer shrink-0"
-            title="Switch or add artists"
-          >
-            <Users className="w-3.5 h-3.5" />
-            <span>Switch Profile</span>
-          </button>
+    <section className="mx-auto w-full max-w-6xl space-y-8 pb-24">
+      <header className="flex items-center justify-between gap-4 border-b border-[#E5E7EB] pb-5">
+        <div className="min-w-0">
+          <p className="text-xl font-semibold text-[#111827]">कारीगर</p>
+          <h1 className="mt-1 break-words text-2xl font-semibold text-[#111827]">
+            {isGuest ? 'अपना नया उत्पाद जोड़ें' : `${activeArtist?.name || 'कारीगर'} का नया उत्पाद`}
+          </h1>
+          <p className="mt-1 text-base text-[#6B7280]">
+            {isGuest ? 'Guest mode · बिना login के शुरू करें' : `${activeArtist?.craft || 'हस्तनिर्मित कला'} · ${activeArtist?.village || 'भारत'}`}
+          </p>
         </div>
-      </div>
-
-      {/* Two Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* Take Photo (Primary Action) */}
         <button
+          type="button"
+          onClick={() => {
+            console.log('Button clicked:', 'seller-header-profile');
+            if (onOpenProfile) onOpenProfile();
+            else onSwitchArtist();
+          }}
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-[#E5E7EB] text-[#111827] hover:border-[#FF6B35] hover:text-[#FF6B35]"
+          aria-label="प्रोफ़ाइल खोलें"
+        >
+          <UserRound className="h-6 w-6" aria-hidden="true" />
+        </button>
+      </header>
+
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <button
+          type="button"
           onClick={handleTakePhotoClick}
-          id="camera-take-photo-btn"
-          className="p-5 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 hover:border-stone-900 shadow-xs text-left transition-colors group cursor-pointer"
+          className="flex min-h-56 flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#FF6B35] bg-[#FFF7F2] p-6 text-center hover:bg-[#FFF1EA]"
         >
-          <div className="w-10 h-10 rounded-lg bg-stone-900 text-white flex items-center justify-center mb-3">
-            <Camera className="w-5 h-5" />
-          </div>
-          <span className="inline-block text-[10px] font-semibold text-stone-700 uppercase tracking-wider bg-stone-100 px-2 py-0.5 rounded border border-stone-200 mb-1.5">
-            Recommended
+          <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-[#FF6B35] text-white">
+            <Camera className="h-7 w-7" aria-hidden="true" />
           </span>
-          <h2 className="text-base sm:text-lg font-bold text-stone-900">
-            {t.takePhoto}
-          </h2>
-          <p className="text-xs text-stone-500 mt-0.5 leading-relaxed">
-            {t.takePhotoDesc} (Front, 45° Angle, Top View).
-          </p>
-
-          <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-stone-900">
-            <span>Start Guided Capture</span>
-            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </div>
+          <span className="mt-4 text-xl font-semibold text-[#111827]">कैमरा खोलें</span>
+          <span className="mt-1 text-base text-[#6B7280]">Tap to take photo</span>
+          <span className="mt-3 flex items-center gap-2 text-base font-semibold text-[#FF6B35]">
+            Guided 3-photo listing <ChevronRight className="h-5 w-5" aria-hidden="true" />
+          </span>
         </button>
 
-        {/* Upload from Gallery (Secondary Action) */}
         <button
+          type="button"
           onClick={handleUploadClick}
-          id="camera-upload-gallery-btn"
-          className="p-5 rounded-xl bg-white hover:bg-stone-50 border border-stone-200 hover:border-stone-400 shadow-xs text-left transition-colors group cursor-pointer"
+          className="flex min-h-56 flex-col items-center justify-center rounded-lg border border-[#E5E7EB] bg-white p-6 text-center hover:border-[#FF6B35]"
         >
-          <div className="w-10 h-10 rounded-lg bg-stone-100 text-stone-800 flex items-center justify-center mb-3 border border-stone-200">
-            <FolderOpen className="w-5 h-5 text-stone-700" />
-          </div>
-          <span className="inline-block text-[10px] font-semibold text-stone-600 uppercase tracking-wider bg-stone-100 px-2 py-0.5 rounded border border-stone-200 mb-1.5">
-            Quick Upload
+          <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-[#F9FAFB] text-[#111827]">
+            <FolderOpen className="h-7 w-7" aria-hidden="true" />
           </span>
-          <h2 className="text-base sm:text-lg font-bold text-stone-900">
-            {t.uploadGallery}
-          </h2>
-          <p className="text-xs text-stone-500 mt-0.5 leading-relaxed">
-            {t.uploadGalleryDesc} or test with verified sample artisan photos.
-          </p>
-
-          <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-stone-700">
-            <span>Select Existing Photos</span>
-            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </div>
+          <span className="mt-4 text-xl font-semibold text-[#111827]">गैलरी से चुनें</span>
+          <span className="mt-1 text-base text-[#6B7280]">Upload from gallery</span>
+          <span className="mt-3 flex items-center gap-2 text-base font-semibold text-[#111827]">
+            Use existing photos <ChevronRight className="h-5 w-5" aria-hidden="true" />
+          </span>
         </button>
-      </div>
+      </section>
 
-      {/* Recent Listings Section */}
-      <div className="bg-white rounded-xl p-4 sm:p-5 border border-stone-200 shadow-xs">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h3 className="font-bold text-sm sm:text-base text-stone-900 flex items-center gap-2">
-              <Package className="w-4 h-4 text-stone-700" />
-              <span>{t.recentListings}</span>
-              <span className="text-xs font-normal text-stone-500">
-                ({recentProducts.length} published)
-              </span>
-            </h3>
-            <p className="text-xs text-stone-500">
-              Live products actively visible to buyers across India
-            </p>
-          </div>
-          <button
-            onClick={onViewAllListings}
-            className="text-xs font-semibold text-stone-700 hover:text-stone-900 transition-colors"
-          >
-            View All →
-          </button>
-        </div>
-
-        {recentProducts.length === 0 ? (
-          <div className="text-center py-6 bg-stone-50 rounded-lg border border-dashed border-stone-200">
-            <p className="text-xs text-stone-500">No products published yet.</p>
-            <p className="text-xs text-stone-700 mt-0.5 font-medium">
-              Take your first photo above to start!
-            </p>
+      <section>
+        <SectionHeading icon={<Package className="h-5 w-5" aria-hidden="true" />} title="आपकी हाल की listings" subtitle="Guest listings इसी device पर सुरक्षित रहती हैं" />
+        {recent.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-[#D1D5DB] bg-[#F9FAFB] p-8 text-center">
+            <ImageIcon className="mx-auto h-8 w-8 text-[#9CA3AF]" aria-hidden="true" />
+            <p className="mt-3 text-base font-semibold text-[#111827]">अभी कोई listing नहीं है</p>
+            <p className="mt-1 text-base text-[#6B7280]">पहला उत्पाद जोड़ने के लिए ऊपर कैमरा खोलें।</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {recentProducts.slice(0, 3).map((product) => (
-              <div
-                key={product.id}
-                onClick={() => onViewProduct(product)}
-                id={`recent-prod-${product.id}`}
-                className="rounded-lg border border-stone-200 p-2.5 hover:border-stone-400 hover:shadow-xs transition-colors cursor-pointer bg-white group flex sm:flex-col items-center sm:items-start gap-2.5"
-              >
-                <div className="w-16 h-16 sm:w-full sm:h-32 rounded-md overflow-hidden bg-stone-100 shrink-0 border border-stone-200">
-                  <img
-                    src={product.imagePaths[0]}
-                    alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-102 transition-transform"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-medium uppercase text-stone-600 bg-stone-100 px-1.5 py-0.2 rounded border border-stone-200">
-                    {product.category}
-                  </span>
-                  <h4 className="font-bold text-xs sm:text-sm text-stone-900 truncate mt-1">
-                    {product.title}
-                  </h4>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-sm font-bold text-stone-900">
-                      ₹{product.price}
-                    </span>
-                    <span className="text-[10px] text-stone-500">
-                      Stock: {product.stock || 5}
-                    </span>
-                  </div>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {recent.slice(0, 3).map((product) => (
+              <ProductTile key={product.id} product={product} onClick={onViewProduct} />
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </section>
+
+      <section>
+        <SectionHeading icon={<Users className="h-5 w-5" aria-hidden="true" />} title="इस सप्ताह के top artisans" subtitle="कारीगर समुदाय की कमाई" />
+        <div className="divide-y divide-[#E5E7EB] rounded-lg border border-[#E5E7EB] bg-white">
+          {topArtisans.map((artist, index) => (
+            <div key={artist.id} className="flex min-w-0 items-center gap-3 px-4 py-4">
+              <span className="w-8 shrink-0 text-center text-lg font-semibold text-[#FF6B35]">{index + 1}</span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-base font-semibold text-[#111827]">{artist.name}</p>
+                <p className="truncate text-sm text-[#6B7280]">{artist.craft} · {artist.village}</p>
+              </div>
+              <span className="shrink-0 text-base font-semibold text-[#111827]">₹{(artist.totalEarned || FALLBACK_EARNINGS[index] || 0).toLocaleString('en-IN')}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <SectionHeading icon={<ImageIcon className="h-5 w-5" aria-hidden="true" />} title="सभी listings" subtitle="भारत के कारीगरों के handmade products" />
+          {!isGuest && (
+            <button
+              type="button"
+              onClick={() => {
+                console.log('Button clicked:', 'seller-view-all-listings');
+                onViewAllListings();
+              }}
+              className="flex min-h-12 items-center gap-1 rounded-lg border border-[#E5E7EB] px-3 text-sm font-semibold text-[#111827] hover:border-[#FF6B35] hover:text-[#FF6B35]"
+            >
+              सभी देखें <ChevronRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+          )}
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {listings.slice(0, 8).map((product) => (
+            <ProductTile key={product.id} product={product} onClick={onViewProduct} compact />
+          ))}
+        </div>
+      </section>
+    </section>
   );
 };
 
+const SectionHeading: React.FC<{ icon: React.ReactNode; title: string; subtitle: string }> = ({ icon, title, subtitle }) => (
+  <div className="mb-4 flex min-w-0 items-start gap-3">
+    <span className="mt-0.5 shrink-0 text-[#FF6B35]">{icon}</span>
+    <div className="min-w-0">
+      <h2 className="break-words text-xl font-semibold text-[#111827]">{title}</h2>
+      <p className="mt-1 break-words text-base text-[#6B7280]">{subtitle}</p>
+    </div>
+  </div>
+);
+
+const ProductTile: React.FC<{ product: Product; onClick: (product: Product) => void; compact?: boolean }> = ({ product, onClick, compact = false }) => {
+  const image = product.imagePaths?.[0] || product.image || '/assets/crafts/blue_pottery_vase.jpg';
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        console.log('Button clicked:', `product-${product.id}`);
+        onClick(product);
+      }}
+      className="group min-w-0 overflow-hidden rounded-lg border border-[#E5E7EB] bg-white text-left hover:border-[#FF6B35]"
+    >
+      <div className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} overflow-hidden bg-[#F9FAFB]`}>
+        <img src={image} alt={product.title} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+      </div>
+      <div className="min-w-0 p-3">
+        <p className="line-clamp-2 break-words text-base font-semibold text-[#111827]">{product.title}</p>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+          <span className="text-base font-semibold text-[#111827]">₹{product.price.toLocaleString('en-IN')}</span>
+          <span className="text-sm text-[#6B7280]">{product.category}</span>
+        </div>
+      </div>
+    </button>
+  );
+};

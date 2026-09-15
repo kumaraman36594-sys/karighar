@@ -46,6 +46,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
   const tokenBalance = props.tokenBalance ?? 245;
   const deviceMode = props.deviceMode;
   const isAudioMuted = props.isAudioMuted;
+  const isPhonePreview = deviceMode === 'phone';
 
   const onLanguageChange = (lang: Language) => {
     if (props.onLanguageChange) props.onLanguageChange(lang);
@@ -76,11 +77,11 @@ export const Header: React.FC<HeaderProps> = (props) => {
   const onOpenTokens = props.onOpenTokens;
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-stone-200 sticky top-0 z-40 px-3 sm:px-6 py-2.5 shadow-xs">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 sm:gap-4" style={{ fontWeight: 300 }}>
         {/* Brand */}
         <div className="flex items-center gap-2.5 min-w-0">
           <KarigharWordmark size="sm" align="left" />
-          <span className="hidden sm:inline-block text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md bg-stone-100 border border-stone-200 text-stone-700 tracking-wider">
+          <span className={`${isPhonePreview ? 'hidden' : 'hidden sm:inline-block'} text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md bg-stone-100 border border-stone-200 text-stone-700 tracking-wider`}>
             Heritage Crafts
           </span>
         </div>
@@ -88,9 +89,10 @@ export const Header: React.FC<HeaderProps> = (props) => {
         {/* Center: Active Artist (for Seller) or Quick Switch */}
         {currentRole === 'seller' && activeArtist && (
           <button
+            type="button"
             onClick={onOpenArtistSwitcher}
             id="header-artist-switch-btn"
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition-colors text-left"
+            className={`${isPhonePreview ? 'hidden' : 'hidden md:flex'} items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition-colors text-left min-w-0`}
             title="Switch or register artists"
           >
             <div className="w-7 h-7 rounded-full overflow-hidden border border-stone-300 shrink-0">
@@ -114,9 +116,9 @@ export const Header: React.FC<HeaderProps> = (props) => {
         )}
 
         {/* Controls: Device preview switch, Audio, Language, Role */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-1.5 sm:gap-2">
           {/* Device viewport simulator pills */}
-          <div className="hidden lg:flex items-center p-0.5 rounded-lg bg-stone-100 border border-stone-200 text-stone-600 text-xs">
+          <div className={`${isPhonePreview ? 'hidden' : 'hidden lg:flex'} items-center p-0.5 rounded-lg bg-stone-100 border border-stone-200 text-stone-600 text-xs`}>
             <button
               type="button"
               onClick={() => {
@@ -183,7 +185,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
               onToggleAudioMute();
             }}
             id="audio-mute-toggle"
-            className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+            className={`shrink-0 p-2 rounded-lg border transition-colors cursor-pointer ${
               isAudioMuted 
                 ? 'bg-stone-100 border-stone-200 text-stone-500 hover:bg-stone-200' 
                 : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
@@ -202,7 +204,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
                 onLanguageChange(e.target.value as Language);
               }}
               id="language-selector"
-              className="bg-stone-50 hover:bg-stone-100 text-stone-800 text-xs font-semibold py-1.5 pl-2.5 pr-7 border border-stone-200 rounded-lg appearance-none cursor-pointer focus:outline-hidden focus:border-stone-400 transition-colors"
+              className={`${isPhonePreview ? 'w-[112px] max-w-[112px]' : 'w-[112px] max-w-[112px] sm:w-auto sm:max-w-none'} bg-stone-50 hover:bg-stone-100 text-stone-800 text-xs font-semibold py-1.5 pl-2.5 pr-7 border border-stone-200 rounded-lg appearance-none cursor-pointer focus:outline-hidden focus:border-stone-400 transition-colors`}
             >
               <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
               <option value="en">🇮🇳 English</option>
@@ -229,7 +231,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
               console.log('Button clicked:', 'header-tokens-badge');
               if (onOpenTokens) onOpenTokens();
             }} 
-            size="md"
+            size={isPhonePreview ? 'sm' : 'md'}
           />
 
           {/* Quick Role Toggle (Seller ⇄ Buyer) */}
@@ -240,7 +242,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
               onRoleChange(currentRole === 'seller' ? 'buyer' : 'seller');
             }}
             id="role-toggle-btn"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all shadow-xs cursor-pointer ${
+            className={`flex shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all shadow-xs cursor-pointer ${
               currentRole === 'seller'
                 ? 'bg-stone-900 hover:bg-black text-white border-stone-900'
                 : 'bg-emerald-700 hover:bg-emerald-800 text-white border-emerald-700'
@@ -249,14 +251,14 @@ export const Header: React.FC<HeaderProps> = (props) => {
             {currentRole === 'seller' ? (
               <>
                 <Store className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline">Seller Mode</span>
-                <span className="sm:hidden">Seller</span>
+                <span className={isPhonePreview ? 'hidden' : 'hidden sm:inline'}>Seller Mode</span>
+                <span className={isPhonePreview ? 'inline' : 'sm:hidden'}>Seller</span>
               </>
             ) : (
               <>
                 <ShoppingBag className="w-3.5 h-3.5 text-white" />
-                <span className="hidden sm:inline">Buyer Mode</span>
-                <span className="sm:hidden">Buyer</span>
+                <span className={isPhonePreview ? 'hidden' : 'hidden sm:inline'}>Buyer Mode</span>
+                <span className={isPhonePreview ? 'inline' : 'sm:hidden'}>Buyer</span>
               </>
             )}
           </button>
